@@ -135,7 +135,7 @@ footer .wrap{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 /* Image de fond de l'accueil (réglée par la ligne « fond: » de contenu/accueil.md) */
 body.avec-fond{background:#0b1024}
 body.avec-fond::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:linear-gradient(180deg,rgba(6,10,28,.72) 0,rgba(6,10,28,.5) 45%,rgba(6,10,28,.78) 100%),var(--fond) center/cover no-repeat}
+  background:linear-gradient(180deg,rgba(6,10,28,.72) 0,rgba(6,10,28,.5) 45%,rgba(6,10,28,.78) 100%),var(--fond) 85% center/cover no-repeat}
 body.avec-fond::after{display:none}
 body.avec-fond main h1,body.avec-fond .intro,body.avec-fond footer,body.avec-fond footer a{color:#fff}
 body.avec-fond .intro{text-shadow:0 1px 3px rgba(0,0,0,.8)}

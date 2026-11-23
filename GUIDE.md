@@ -184,6 +184,6 @@ Et tu peux toujours me demander : « ajoute un chapitre sur … en SVT », je te
 
 ---
 
-## 7. À faire une seule fois
+## 7. Mentions légales
 
-Ouvre `contenu/mentions-legales.md` et remplace les passages entre crochets `[ … ]` par ton nom, ta fonction et une adresse e-mail de contact. C'est obligatoire pour un site public en France.
+Elles sont dans `contenu/mentions-legales.md` (éditeur : Kendji, contact au lycée). Si tu veux ajouter une adresse e-mail de contact, utilise plutôt une adresse dédiée au site que ton adresse personnelle.
