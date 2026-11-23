@@ -1,0 +1,6 @@
+# Une ligne par matière :  dossier | nom affiché | icône | couleur | description
+# (les lignes qui commencent par # sont ignorées)
+maths | Maths | 📐 | #1f63d6 | Fonctions, suites, probabilités, géométrie
+physique-chimie | Physique-Chimie | ⚗️ | #b54708 | Mécanique, électricité, ondes, chimie
+philosophie | Philosophie | 💭 | #6d3fc0 | La science, la vérité, la technique…
+svt | SVT | 🌿 | #2e7d32 | Génétique, corps humain, écologie, géologie

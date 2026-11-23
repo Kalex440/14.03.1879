@@ -1,0 +1,133 @@
+/* ===== Révisions sciences : thème « ciel et pelouse » ===== */
+/* Polices hébergées sur le site (aucun appel à Google) — licence SIL OFL */
+@font-face{font-family:"Fredoka";font-weight:500;font-display:swap;src:url(polices/fredoka-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Fredoka";font-weight:600;font-display:swap;src:url(polices/fredoka-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Nunito";font-weight:400;font-display:swap;src:url(polices/nunito-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Nunito";font-weight:700;font-display:swap;src:url(polices/nunito-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Nunito";font-weight:800;font-display:swap;src:url(polices/nunito-latin-800-normal.woff2) format("woff2")}
+
+:root{
+  --sky1:#bfe0ff; --sky2:#eef7ff; --blue:#1f63d6; --blue-d:#164ba6; --navy:#12306b;
+  --sun:#ffc634; --grass1:#7ccb5e; --grass2:#68b84b; --grass-d:#3f8a2e;
+  --ink:#1b2840; --mut:#4f5f7a; --line:#d3e1f5; --ok:#23793a; --ok-l:#e5f6e7; --ko:#b83232; --ko-l:#fdeaea;
+  --c:var(--blue);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;color:var(--ink);font:17px/1.6 "Nunito",system-ui,sans-serif;
+  background:linear-gradient(180deg,var(--sky1) 0,var(--sky2) 420px,#f6fbff 100%) fixed;padding-bottom:80px;position:relative}
+body::after{content:"";position:fixed;left:0;right:0;bottom:0;height:56px;z-index:0;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='22' viewBox='0 0 60 22'%3E%3Cpath d='M0 22 L4 6 L8 22 L12 10 L16 22 L20 2 L24 22 L28 9 L32 22 L36 5 L40 22 L44 11 L48 22 L52 3 L56 22 L60 8 L60 22Z' fill='%2368b84b'/%3E%3C/svg%3E") repeat-x top/60px 22px,
+   repeating-linear-gradient(90deg,var(--grass1) 0 80px,var(--grass2) 80px 160px) 0 21px/100% 100% no-repeat}
+.wrap{max-width:940px;margin:0 auto;padding:0 16px;position:relative;z-index:1}
+main.wrap{z-index:2;outline:none;min-height:60vh}
+h1,h2,h3{font-family:"Fredoka","Nunito",sans-serif;color:var(--navy);line-height:1.2;font-weight:600}
+h1{font-size:32px;margin:22px 0 4px} h2{font-size:23px;margin:20px 0 8px} h3{font-size:19px;margin:16px 0 6px}
+a{color:var(--blue-d)}
+.mut{color:var(--mut)} .note{font-size:14.5px;color:var(--mut)} .hide{display:none!important}
+.skip{position:absolute;left:-999px;top:8px;background:#fff;padding:8px 14px;border-radius:8px;z-index:99}
+.skip:focus{left:8px}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+
+/* En-tête */
+header{background:linear-gradient(180deg,var(--blue) 0,var(--blue-d) 100%);color:#fff;position:relative;z-index:3;box-shadow:0 4px 0 var(--grass-d)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:10px;padding-bottom:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font:600 21px "Fredoka",sans-serif;color:#fff;text-decoration:none}
+.brand small{display:block;font:700 11.5px "Nunito";letter-spacing:.1em;text-transform:uppercase;color:var(--sun)}
+.sunicon{width:38px;height:38px;flex:none}
+#nav{display:flex;gap:4px;flex-wrap:wrap}
+#nav a{color:#fff;text-decoration:none;padding:7px 12px;border-radius:99px;font-weight:700;font-size:14.5px}
+#nav a:hover{background:rgba(255,255,255,.18)}
+#nav a.on{background:#fff;color:var(--blue-d)}
+
+/* Clôture sous les titres */
+.rule{height:16px;margin:4px 0 16px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3E%3Crect x='3' y='0' width='6' height='16' rx='3' fill='%23c9925a'/%3E%3Crect x='0' y='6' width='24' height='3' fill='%239c6a3a'/%3E%3C/svg%3E") repeat-x;max-width:260px}
+
+.hero{display:flex;gap:16px;align-items:center}
+.hero svg{flex:none;width:96px;height:96px}
+.intro{font-size:17.5px}
+
+/* Les 4 matières */
+.matieres{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:18px 0 10px}
+.matiere{background:#fff;border:2px solid var(--line);border-top:8px solid var(--c);border-radius:18px;padding:18px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:6px;transition:.15s;box-shadow:0 4px 0 rgba(31,99,214,.08)}
+.matiere:hover{transform:translateY(-3px);border-color:var(--c)}
+.matiere .mic{font-size:44px;line-height:1}
+.matiere b{font:600 22px "Fredoka",sans-serif;color:var(--c)}
+.badge{align-self:flex-start;margin-top:auto;background:var(--c);color:#fff;border-radius:99px;padding:2px 12px;font-size:13.5px;font-weight:800}
+.tmat{color:var(--c)}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 3px 0 rgba(31,99,214,.08)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.tile{background:#fff;border:1.5px solid var(--line);border-left:6px solid var(--c);border-radius:16px;padding:16px;text-decoration:none;color:inherit;display:block;transition:.12s;box-shadow:0 3px 0 rgba(31,99,214,.08)}
+.tile:hover{border-color:var(--c);transform:translateY(-2px)}
+.tile b{font:600 19px "Fredoka",sans-serif;color:var(--navy);display:block}
+.tile p{margin:6px 0 0}
+.tile.err{border-left-color:var(--ko)}
+.niv{display:inline-block;font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--c);margin-bottom:2px}
+.fil{font-size:14.5px;margin-top:16px;color:var(--mut)} .fil a{color:var(--blue-d)}
+
+/* Onglets du chapitre */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.tabs button{font:700 15px "Nunito";border:2px solid var(--c);background:#fff;color:var(--navy);border-radius:99px;padding:8px 16px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--c);color:#fff}
+#panneau{outline:none}
+
+/* Cours */
+.cours h2{border-bottom:3px solid var(--line);padding-bottom:4px}
+.cours img{max-width:100%;height:auto;border-radius:10px}
+.cours blockquote{margin:12px 0;padding:10px 14px;background:#fff6d6;border-left:5px solid var(--sun);border-radius:8px}
+.cours table{border-collapse:collapse;width:100%;display:block;overflow-x:auto}
+.cours th,.cours td{border:1px solid var(--line);padding:6px 10px;text-align:left}
+.cours th{background:#e6f0ff}
+code{background:#eef3fb;padding:1px 5px;border-radius:5px;font-size:.92em}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}
+details{margin-top:10px}
+summary{cursor:pointer;font-weight:800;color:var(--blue-d)}
+.corr{background:var(--ok-l);border-radius:10px;padding:4px 14px;margin-top:8px}
+
+/* Boutons */
+.btn{display:inline-block;border:none;background:var(--blue);color:#fff;border-radius:99px;padding:10px 20px;font:700 15px "Nunito";cursor:pointer;text-decoration:none;box-shadow:0 3px 0 var(--blue-d)}
+.btn.alt{background:#fff;color:var(--blue-d);border:1.5px solid var(--blue);box-shadow:0 3px 0 var(--line)}
+.btn.sm{padding:6px 13px;font-size:14px}
+
+/* QCM */
+.scorebar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+fieldset.q{border:1px solid var(--line)}
+fieldset.q legend{float:left;width:100%;padding:0;font-weight:700;margin-bottom:10px}
+.num{color:var(--c);font-weight:800}
+.opts{clear:both;display:grid;gap:8px}
+.opt{font:600 16px "Nunito";text-align:left;background:#f6f9ff;border:2px solid var(--line);border-radius:12px;padding:10px 14px;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--c)}
+.opt:disabled{cursor:default}
+.opt.ok{background:var(--ok-l);border-color:var(--ok)} .opt.ok::before{content:"✔ ";color:var(--ok)}
+.opt.ko{background:var(--ko-l);border-color:var(--ko)} .opt.ko::before{content:"✘ ";color:var(--ko)}
+.fb p{margin:10px 0 0}
+
+/* Flashcards */
+.cartes{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.carte{display:flex;flex-direction:column;gap:6px}
+.face{min-height:140px;border:2px solid var(--c);border-radius:16px;background:#fff;font:700 16.5px "Nunito";color:var(--navy);padding:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;box-shadow:0 3px 0 rgba(31,99,214,.1)}
+.face .verso{display:none;font-weight:600;color:var(--ink)}
+.face.tourne{background:#fff6d6;border-color:var(--sun)}
+.face.tourne .recto{display:none} .face.tourne .verso{display:block}
+.carte.sue .face{border-style:dashed;opacity:.75}
+
+footer{position:relative;z-index:2;text-align:center;font-size:14.5px;padding:26px 0 6px}
+footer .wrap{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+
+/* Le papangue qui survole l'accueil */
+.papangue{position:fixed;left:0;top:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .8s;will-change:transform;filter:drop-shadow(0 8px 6px rgba(18,48,107,.18))}
+.papangue.show{opacity:1}
+.papangue svg{display:block;pointer-events:auto;cursor:pointer}
+.papangue .wing{transform-box:view-box}
+.papangue .wing.front{transform-origin:90px 50px;animation:flapF .55s ease-in-out infinite}
+.papangue .wing.back{transform-origin:66px 48px;animation:flapB .55s ease-in-out infinite}
+.papangue.glide .wing{animation:none}
+.papangue.glide .wing.front{transform:scaleY(.9)}
+@keyframes flapF{0%,100%{transform:scaleY(1)}50%{transform:scaleY(-.55)}}
+@keyframes flapB{0%,100%{transform:scaleY(1)}50%{transform:scaleY(-.45)}}
+.papangue.loop svg{animation:looping .9s ease-in-out}
+@keyframes looping{to{transform:rotate(-360deg)}}
+
+@media (max-width:560px){h1{font-size:26px}.hero svg{width:64px;height:64px}.papangue svg{width:96px;height:60px}.matieres{grid-template-columns:1fr 1fr;gap:10px}.matiere{padding:14px}.matiere .mic{font-size:34px}.matiere b{font-size:19px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
