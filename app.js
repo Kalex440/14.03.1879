@@ -268,10 +268,10 @@
   }
 
 
-  /* ---------- Connexion (mêmes identifiants que le site philo) ----------
+  /* ---------- Connexion ----------
      Pour changer l'identifiant ou le mot de passe : demande à Claude une nouvelle « empreinte »
      (SHA-256 de « identifiant:motdepasse » en minuscules) et remplace la valeur ci-dessous. */
-  const LOGIN_HASH = "b4954d2cdcc2c1e584801a79424be94eba30192746ee67c6ab37c0a5575b1a1e";
+  const LOGIN_HASH = "fbea7dfb5fba8de82f2a41751afa1c99e83ee1a32c485375856aba4d937eba18";
   function connecte() { const a = store.get("auth", null); return !!(a && a.ok && (a.rem || Date.now() - a.t < 432e5)); }
   async function sha256(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
   function pageConnexion() {
