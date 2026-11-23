@@ -47,7 +47,7 @@
   /* ---------- Lecture des fichiers de contenu ---------- */
   async function chargerReglages() {
     const a = entete(await lire("contenu/accueil.md"));
-    SITE = { titre: a.infos.titre || "Révisions", sous: a.infos["sous-titre"] || "", texte: a.corps };
+    SITE = { titre: a.infos.titre || "Révisions", sous: a.infos["sous-titre"] || "", fond: a.infos.fond || "", texte: a.corps };
     MATIERES = (await lire("contenu/matieres.txt")).split("\n")
       .filter(l => l.trim() && !l.trim().startsWith("#"))
       .map(l => { const [id, nom, icone, couleur, desc] = l.split("|").map(s => (s || "").trim()); return { id, nom, icone, couleur: couleur || "#1f63d6", desc }; });
@@ -105,6 +105,10 @@
 
   async function pageAccueil() {
     document.title = SITE.titre;
+    if (SITE.fond) {
+      document.body.style.setProperty("--fond", `url("${SITE.fond.replace(/^images\//, "contenu/images/").replace(/"/g, "")}")`);
+      document.body.classList.add("avec-fond");
+    }
     const comptes = await Promise.all(MATIERES.map(m => listeChapitres(m.id).then(l => l.length)));
     main.innerHTML = `
       <div class="hero">
@@ -226,6 +230,7 @@
   /* ---------- Routeur ---------- */
   async function route() {
     window.papangue && papangue.stop();
+    document.body.classList.remove("avec-fond");
     const [mid, cid, onglet] = decodeURIComponent(location.hash.slice(1)).split("/");
     try {
       if (!SITE) await chargerReglages();

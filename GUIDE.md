@@ -159,6 +159,7 @@ Le texte entre crochets est **obligatoire** : il est lu aux élèves malvoyants.
 ## 5. Modifier l'accueil, les matières, les couleurs
 
 - **Titre du site et texte d'accueil** : `contenu/accueil.md`.
+- **Image de fond de l'accueil** : dans `contenu/accueil.md`, la ligne `fond: images/fond-accueil.webp`. Pour la changer, dépose une nouvelle image dans `contenu/images/` et mets son nom sur cette ligne. Pour ne plus avoir d'image, supprime la ligne. Choisis une image sombre et légère (moins de 300 Ko).
 - **Matières** : `contenu/matieres.txt`, une ligne par matière :
 
   ```
