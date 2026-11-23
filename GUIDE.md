@@ -191,3 +191,7 @@ Elles sont dans `contenu/mentions-legales.md` (éditeur : Kendji, contact au lyc
 ## 8. Connexion
 
 Le site demande le même identifiant et le même mot de passe que ton site de philo. Pour les changer, demande-moi : je calcule la nouvelle « empreinte » et je la remplace dans `app.js` (ligne `LOGIN_HASH`). Attention : c'est un simple cadenas pour éviter les visiteurs de passage. Le dépôt GitHub étant public, les fichiers du dossier `contenu/` restent lisibles par quelqu'un qui les cherche ; n'y mets donc rien de confidentiel (pas de notes ni de noms d'élèves).
+
+## 9. Si les élèves voient une ancienne version
+
+Les navigateurs gardent le site en mémoire jusqu'à 10 minutes. Le contenu (`contenu/`) se met à jour tout seul. Si un jour on modifie `style.css` ou `app.js`, on change le numéro `?v=...` dans `index.html` pour forcer la mise à jour.
