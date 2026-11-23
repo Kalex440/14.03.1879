@@ -53,7 +53,7 @@
       .map(l => { const [id, nom, icone, couleur, desc] = l.split("|").map(s => (s || "").trim()); return { id, nom, icone, couleur: couleur || "#1f63d6", desc }; });
     document.getElementById("brandTitle").textContent = SITE.titre;
     document.getElementById("brandSmall").textContent = SITE.sous || "Révisions";
-    nav.innerHTML = `<a href="#" data-v="">Accueil</a>` + MATIERES.map(m => `<a href="#${esc(m.id)}" data-v="${esc(m.id)}"><span aria-hidden="true">${esc(m.icone)}</span> ${esc(m.nom)}</a>`).join("");
+    nav.innerHTML = `<a href="#" data-v="">Accueil</a>` + MATIERES.map(m => `<a href="#${esc(m.id)}" data-v="${esc(m.id)}"><span aria-hidden="true">${esc(m.icone)}</span> ${esc(m.nom)}</a>`).join("") + `<a href="#" class="out" onclick="deconnexion();return false">Déconnexion</a>`;
   }
   async function listeChapitres(mid) {
     try {
@@ -112,7 +112,7 @@
     const comptes = await Promise.all(MATIERES.map(m => listeChapitres(m.id).then(l => l.length)));
     main.innerHTML = `
       <div class="hero">
-        <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 60v34" stroke="#3f8a2e" stroke-width="6"/><path d="M50 82c-10-10-22-8-26-4 8 6 18 8 26 4z" fill="#7ccb5e"/><g fill="#5aa0ff" stroke="#1f63d6" stroke-width="3"><circle cx="50" cy="22" r="13"/><circle cx="72" cy="38" r="13"/><circle cx="64" cy="62" r="13"/><circle cx="36" cy="62" r="13"/><circle cx="28" cy="38" r="13"/></g><circle cx="50" cy="44" r="12" fill="#ffd34d" stroke="#ffb400" stroke-width="3"/></svg>
+        <svg class="atome" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="ga2" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff6c8"/><stop offset=".45" stop-color="#ffc634"/><stop offset="1" stop-color="#ff9d00" stop-opacity="0"/></radialGradient></defs><g fill="none" stroke="#bcd3ff" stroke-width="2.6" opacity=".9"><ellipse cx="50" cy="50" rx="44" ry="15"/><ellipse cx="50" cy="50" rx="44" ry="15" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="44" ry="15" transform="rotate(120 50 50)"/></g><circle cx="50" cy="50" r="17" fill="url(#ga2)"/><circle cx="50" cy="50" r="7" fill="#fff3b0"/><circle cx="94" cy="50" r="4.5" fill="#ffd34d"/><circle cx="28" cy="88" r="4.5" fill="#8fb8ff"/><circle cx="28" cy="12" r="4.5" fill="#f5f8ff"/></svg>
         <div><h1>${esc(SITE.titre)}</h1><div class="rule"></div></div>
       </div>
       <div class="intro">${md(SITE.texte)}</div>
@@ -227,6 +227,37 @@
     main.querySelector("#eff").onclick = () => { store.clear(); main.querySelector("#effOk").textContent = "C'est fait, ta progression est effacée."; };
   }
 
+
+  /* ---------- Connexion (mêmes identifiants que le site philo) ----------
+     Pour changer l'identifiant ou le mot de passe : demande à Claude une nouvelle « empreinte »
+     (SHA-256 de « identifiant:motdepasse » en minuscules) et remplace la valeur ci-dessous. */
+  const LOGIN_HASH = "b4954d2cdcc2c1e584801a79424be94eba30192746ee67c6ab37c0a5575b1a1e";
+  function connecte() { const a = store.get("auth", null); return !!(a && a.ok && (a.rem || Date.now() - a.t < 432e5)); }
+  async function sha256(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
+  function pageConnexion() {
+    document.title = "Connexion · " + (SITE ? SITE.titre : "Révisions");
+    nav.hidden = true; document.body.classList.add("avec-fond");
+    if (SITE && SITE.fond) document.body.style.setProperty("--fond", `url("${SITE.fond.replace(/^images\//, "contenu/images/").replace(/"/g, "")}")`);
+    main.innerHTML = `<form class="card login" id="login" autocomplete="on">
+      <h1>Connexion</h1><p class="mut">Identifie-toi pour accéder aux révisions.</p>
+      <label for="lid">Identifiant</label><input type="text" id="lid" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+      <label for="lpw">Mot de passe</label><div class="pw"><input type="password" id="lpw" autocomplete="current-password" autocapitalize="none" spellcheck="false" required><button type="button" class="eye" aria-label="Afficher le mot de passe" aria-pressed="false">👁️</button></div>
+      <label class="note rem"><input type="checkbox" id="lrem"> Rester connecté sur cet appareil</label>
+      <button class="btn" type="submit">Se connecter</button>
+      <p id="lerr" class="lerr" role="alert"></p></form>`;
+    const f = main.querySelector("#login"), pw = f.querySelector("#lpw"), eye = f.querySelector(".eye");
+    eye.onclick = () => { const v = pw.type === "password"; pw.type = v ? "text" : "password"; eye.setAttribute("aria-pressed", v); eye.setAttribute("aria-label", v ? "Masquer le mot de passe" : "Afficher le mot de passe"); };
+    f.onsubmit = async e => {
+      e.preventDefault();
+      const id = f.querySelector("#lid").value.trim().toLowerCase(), mp = pw.value.trim().toLowerCase();
+      if (await sha256(id + ":" + mp) !== LOGIN_HASH) { f.querySelector("#lerr").textContent = "Identifiant ou mot de passe incorrect."; pw.value = ""; pw.focus(); return; }
+      store.set("auth", { ok: true, t: Date.now(), rem: f.querySelector("#lrem").checked });
+      nav.hidden = false; route();
+    };
+    f.querySelector("#lid").focus();
+  }
+  window.deconnexion = () => { try { localStorage.removeItem("rs:auth"); } catch (e) {} location.hash = ""; route(); };
+
   /* ---------- Routeur ---------- */
   async function route() {
     window.papangue && papangue.stop();
@@ -234,6 +265,8 @@
     const [mid, cid, onglet] = decodeURIComponent(location.hash.slice(1)).split("/");
     try {
       if (!SITE) await chargerReglages();
+      if (mid !== "mentions" && !connecte()) { pageConnexion(); return; }
+      nav.hidden = false;
       const m = MATIERES.find(x => x.id === mid);
       marquerNav(m ? m.id : mid ? "-" : "");
       if (mid === "mentions") await pageMentions();

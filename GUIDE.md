@@ -187,3 +187,7 @@ Et tu peux toujours me demander : « ajoute un chapitre sur … en SVT », je te
 ## 7. Mentions légales
 
 Elles sont dans `contenu/mentions-legales.md` (éditeur : Kendji, contact au lycée). Si tu veux ajouter une adresse e-mail de contact, utilise plutôt une adresse dédiée au site que ton adresse personnelle.
+
+## 8. Connexion
+
+Le site demande le même identifiant et le même mot de passe que ton site de philo. Pour les changer, demande-moi : je calcule la nouvelle « empreinte » et je la remplace dans `app.js` (ligne `LOGIN_HASH`). Attention : c'est un simple cadenas pour éviter les visiteurs de passage. Le dépôt GitHub étant public, les fichiers du dossier `contenu/` restent lisibles par quelqu'un qui les cherche ; n'y mets donc rien de confidentiel (pas de notes ni de noms d'élèves).

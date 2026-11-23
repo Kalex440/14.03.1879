@@ -19,7 +19,7 @@ Les cours, exercices et QCM sont rédigés par l'éditeur pour ses élèves. L'i
 
 **Ce site ne collecte aucune donnée personnelle.** Il n'y a ni compte, ni formulaire, ni cookie, ni outil de mesure d'audience, ni publicité, et aucun service extérieur n'est appelé : tout (polices, formules mathématiques) est hébergé sur le site lui-même.
 
-Ta progression (meilleur score aux QCM, flashcards que tu connais) est enregistrée **uniquement dans ton navigateur**, sur ton appareil (« stockage local »). Elle ne nous est jamais envoyée. Tu peux l'effacer à tout moment avec le bouton ci-dessous, ou en effaçant les données de navigation de ton navigateur.
+Ta connexion et ta progression (meilleur score aux QCM, flashcards que tu connais) sont enregistrées **uniquement dans ton navigateur**, sur ton appareil (« stockage local »). Elles ne nous sont jamais envoyées. Le mot de passe n'est pas conservé. Tu peux l'effacer à tout moment avec le bouton ci-dessous, ou en effaçant les données de navigation de ton navigateur.
 
 Comme tout hébergeur, GitHub peut enregistrer des données techniques de connexion (adresse IP) pour la sécurité de son service : voir la [déclaration de confidentialité de GitHub](https://docs.github.com/fr/site-policy/privacy-policies/github-general-privacy-statement).
 

@@ -30,7 +30,9 @@ a{color:var(--blue-d)}
 :focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 
 /* En-tête */
-header{background:linear-gradient(180deg,var(--blue) 0,var(--blue-d) 100%);color:#fff;position:relative;z-index:3;box-shadow:0 4px 0 var(--grass-d)}
+header{color:#fff;position:relative;z-index:3;border-bottom:2px solid rgba(255,198,52,.75);box-shadow:0 2px 18px rgba(255,198,52,.18);
+  background:radial-gradient(1px 1px at 12% 30%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 37% 70%,#cfe0ff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 58% 22%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 76% 64%,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 91% 35%,#ffe9a8 50%,transparent 51%),radial-gradient(1px 1px at 24% 82%,#fff 50%,transparent 51%),
+  linear-gradient(90deg,#070b1f 0,#141a45 45%,#24164a 100%)}
 header .wrap{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:10px;padding-bottom:10px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;font:600 21px "Fredoka",sans-serif;color:#fff;text-decoration:none}
 .brand small{display:block;font:700 11.5px "Nunito";letter-spacing:.1em;text-transform:uppercase;color:var(--sun)}
@@ -38,7 +40,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 #nav{display:flex;gap:4px;flex-wrap:wrap}
 #nav a{color:#fff;text-decoration:none;padding:7px 12px;border-radius:99px;font-weight:700;font-size:14.5px}
 #nav a:hover{background:rgba(255,255,255,.18)}
-#nav a.on{background:#fff;color:var(--blue-d)}
+#nav a.on{background:#ffc634;color:#12162e}
 
 /* Clôture sous les titres */
 .rule{height:16px;margin:4px 0 16px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3E%3Crect x='3' y='0' width='6' height='16' rx='3' fill='%23c9925a'/%3E%3Crect x='0' y='6' width='24' height='3' fill='%239c6a3a'/%3E%3C/svg%3E") repeat-x;max-width:260px}
@@ -141,3 +143,22 @@ body.avec-fond main h1,body.avec-fond .intro,body.avec-fond footer,body.avec-fon
 body.avec-fond .intro{text-shadow:0 1px 3px rgba(0,0,0,.8)}
 body.avec-fond .intro b,body.avec-fond .intro strong{color:#ffd34d}
 body.avec-fond .matiere{box-shadow:0 8px 24px rgba(0,0,0,.35)}
+
+/* Atome de l'accueil (assorti à l'image de fond) */
+.hero .atome{animation:tourne 40s linear infinite}
+@keyframes tourne{to{transform:rotate(360deg)}}
+body.avec-fond .rule{height:3px;margin:10px 0 18px;background:linear-gradient(90deg,#ffc634,rgba(255,198,52,.15));border-radius:2px}
+
+/* Page de connexion */
+.login{max-width:400px;margin:40px auto;display:flex;flex-direction:column;gap:6px;padding:26px}
+.login h1{margin:0}
+.login label{font-weight:700}
+.login input[type=text],.login input[type=password]{font:16px "Nunito";padding:10px 12px;border:2px solid var(--line);border-radius:10px;width:100%;margin-bottom:8px}
+.login input:focus{border-color:var(--blue)}
+.pw{position:relative}.pw input{padding-right:46px!important}
+.eye{position:absolute;right:6px;top:6px;border:none;background:none;font-size:20px;cursor:pointer;padding:4px}
+.rem{display:flex;gap:8px;align-items:center;margin:4px 0 12px;font-weight:600!important}
+.lerr{color:var(--ko);font-weight:700;min-height:1.2em;margin:8px 0 0;text-align:center}
+#nav a.out{border:1.5px solid rgba(255,255,255,.5)}
+#nav[hidden]{display:none}
+body.avec-fond .login h1{color:var(--navy)}
