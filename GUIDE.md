@@ -171,6 +171,10 @@ Le texte entre crochets est **obligatoire** : il est lu aux élèves malvoyants.
 
 ---
 
+### Une affiche en haut d'une matière
+
+Crée un fichier `presentation.md` dans le dossier de la matière (par exemple `contenu/maths/presentation.md`). Son contenu s'affiche dans un cadre, en haut de la page de la matière. Le texte entre `~~` est barré, celui entre `**` est en couleur. Supprime le fichier pour enlever l'affiche.
+
 ## 6. En cas de problème
 
 - **Le site affiche « Oups »** : un fichier est introuvable. Vérifie l'orthographe dans `chapitres.txt` (sans `.md`, sans espace, sans accent).

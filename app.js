@@ -170,10 +170,12 @@
   async function pageMatiere(m) {
     document.title = m.nom + " · " + SITE.titre;
     const ids = await listeChapitres(m.id);
+    let pres = ""; try { pres = await lire(`contenu/${m.id}/presentation.md`); } catch (e) {}
     const chaps = await Promise.all(ids.map(id => chapitre(m.id, id).catch(() => ({ id, titre: id, erreur: true }))));
     main.innerHTML = `${fil([["Accueil", "#"], [m.nom, ""]])}
       <h1 style="--c:${esc(m.couleur)}" class="tmat"><span aria-hidden="true">${esc(m.icone)}</span> ${esc(m.nom)}</h1><div class="rule"></div>
       ${m.desc ? `<p class="mut">${esc(m.desc)}</p>` : ""}
+      ${pres.trim() ? `<div class="affiche" style="--c:${esc(m.couleur)}">${md(pres)}</div>` : ""}
       ${chaps.length ? `<div class="grid2">${chaps.map(c => {
         if (c.erreur) return `<div class="tile err"><b>${esc(c.id)}</b><p>⚠️ Le fichier <code>contenu/${esc(m.id)}/${esc(c.id)}.md</code> est introuvable. Vérifie son nom dans <code>chapitres.txt</code>.</p></div>`;
         const best = store.get(`qcm:${m.id}/${c.id}`, null);
