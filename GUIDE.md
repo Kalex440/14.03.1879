@@ -203,3 +203,7 @@ Le site demande un identifiant et un mot de passe (ceux que tu m'as donnés le 2
 ## 9. Si les élèves voient une ancienne version
 
 Les navigateurs gardent le site en mémoire jusqu'à 10 minutes. Le contenu (`contenu/`) se met à jour tout seul. Si un jour on modifie `style.css` ou `app.js`, on change le numéro `?v=...` dans `index.html` pour forcer la mise à jour.
+
+## 10. La partie « La nature et la justice » (philo)
+
+Elle reprend tout le site 25.05.1976 dans le dossier `nature-justice/`. Elle garde son propre fonctionnement (ses données sont dans `data.js`, `data2.js`, `data3.js`, `cours.js`…) : pour la modifier, demande-moi. Ta progression et tes notes y sont partagées avec le site 25.05.1976 sur le même appareil. L'envoi du récapitulatif à Kendji se fait seulement si l'élève clique sur « Envoyer à Kendji ».

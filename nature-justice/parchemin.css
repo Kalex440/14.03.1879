@@ -1,0 +1,9 @@
+/* Décor « parchemin antique » de l'onglet Philosophie (remplace le thème jardin) */
+:root{--blue:#6d3fc0;--blue-d:#53309a;--blue-l:#efe8fb;--navy:#3b2470;--line:#e4d7bd;--mut:#5f5470}
+body{background:url(../themes/philosophie.svg),radial-gradient(ellipse at 50% 20%,#fbf5e8 0,#efe3c8 60%,#e3d3b0 100%) fixed;padding-bottom:40px}
+body::after,header::after,.floatsun,.cloud{display:none!important}
+header{border-bottom:2px solid rgba(255,198,52,.75);box-shadow:0 2px 18px rgba(255,198,52,.18)!important;
+  background:radial-gradient(1px 1px at 12% 30%,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 58% 22%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 76% 64%,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 91% 35%,#ffe9a8 50%,transparent 51%),linear-gradient(90deg,#070b1f 0,#141a45 45%,#24164a 100%)!important}
+.rule{height:4px!important;margin:8px 0 18px;max-width:260px;border-radius:2px;background:linear-gradient(90deg,#6d3fc0,rgba(109,63,192,0))!important}
+.card,.tile{background:#fffdf7}
+nav a.on{background:#ffc634!important;color:#12162e!important}

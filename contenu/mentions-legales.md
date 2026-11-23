@@ -17,12 +17,17 @@ Les cours, exercices et QCM sont rédigés par l'éditeur pour ses élèves. L'i
 
 # Confidentialité
 
-**Ce site ne collecte aucune donnée personnelle.** Il n'y a ni compte, ni formulaire, ni cookie, ni outil de mesure d'audience, ni publicité, et aucun service extérieur n'est appelé : tout (polices, formules mathématiques) est hébergé sur le site lui-même.
+**Le site ne collecte aucune donnée personnelle sans action de ta part.** Il n'y a ni cookie, ni outil de mesure d'audience, ni publicité. Polices et formules sont hébergées sur le site lui-même.
+
+Deux fonctions de la partie Philosophie « La nature et la justice » font appel à un service extérieur, **seulement si tu les utilises** :
+
+- **Envoyer ton récapitulatif à Kendji** : quand tu as terminé les 4 modules, tu peux cliquer sur « Envoyer à Kendji ». Ton prénom ou pseudo (un pseudo suffit) et tes notes lui sont alors envoyés par e-mail via le service FormSubmit. Rien n'est envoyé si tu ne cliques pas. Ces informations servent uniquement à Kendji pour suivre tes révisions ; il les supprime à la fin de l'année scolaire ou plus tôt si tu le demandes.
+- **Jouer entre amis** : en créant ou rejoignant un salon, ton navigateur charge le module PeerJS (depuis unpkg.com) et se connecte directement aux téléphones de tes amis ; le service PeerJS voit alors l'adresse IP de ton appareil, le temps de la partie. Le pseudo que tu choisis n'est vu que par les joueurs du salon.
 
 Ta connexion et ta progression (meilleur score aux QCM, flashcards que tu connais) sont enregistrées **uniquement dans ton navigateur**, sur ton appareil (« stockage local »). Elles ne nous sont jamais envoyées. Le mot de passe n'est pas conservé. Tu peux l'effacer à tout moment avec le bouton ci-dessous, ou en effaçant les données de navigation de ton navigateur.
 
 Comme tout hébergeur, GitHub peut enregistrer des données techniques de connexion (adresse IP) pour la sécurité de son service : voir la [déclaration de confidentialité de GitHub](https://docs.github.com/fr/site-policy/privacy-policies/github-general-privacy-statement).
 
-Pour toute question, parle directement à Kendji au lycée. Tu peux aussi saisir la [CNIL](https://www.cnil.fr).
+Pour toute question, ou pour demander la suppression d'un récapitulatif envoyé, parle directement à Kendji au lycée. Tu peux aussi saisir la [CNIL](https://www.cnil.fr).
 
 *Dernière mise à jour : 23 novembre 2026.*

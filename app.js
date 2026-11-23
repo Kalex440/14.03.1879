@@ -295,6 +295,8 @@
       const id = f.querySelector("#lid").value.trim().toLowerCase(), mp = pw.value.trim().toLowerCase();
       if (await sha256(id + ":" + mp) !== LOGIN_HASH) { f.querySelector("#lerr").textContent = "Identifiant ou mot de passe incorrect."; pw.value = ""; pw.focus(); return; }
       store.set("auth", { ok: true, t: Date.now(), rem: f.querySelector("#lrem").checked });
+      let retour = null; try { retour = sessionStorage.getItem("rs:retour"); sessionStorage.removeItem("rs:retour"); } catch (e) {}
+      if (retour && retour.startsWith(location.origin)) { location.href = retour; return; }
       nav.hidden = false; route();
     };
     f.querySelector("#lid").focus();
