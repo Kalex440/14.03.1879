@@ -171,6 +171,10 @@ Le texte entre crochets est **obligatoire** : il est lu aux élèves malvoyants.
 
 ---
 
+### Le décor de chaque matière
+
+Chaque matière a son fond : tableau noir (maths), labo cosmique (physique-chimie), parchemin antique (philo), nature et ADN (SVT). Les motifs sont dans le dossier `themes/`. Pour une nouvelle matière, demande-moi un décor.
+
 ### Une affiche en haut d'une matière
 
 Crée un fichier `presentation.md` dans le dossier de la matière (par exemple `contenu/maths/presentation.md`). Son contenu s'affiche dans un cadre, en haut de la page de la matière. Le texte entre `~~` est barré, celui entre `**` est en couleur. Supprime le fichier pour enlever l'affiche.

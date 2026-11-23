@@ -15,10 +15,7 @@
 *{box-sizing:border-box}
 html,body{margin:0}
 body{min-height:100vh;color:var(--ink);font:17px/1.6 "Nunito",system-ui,sans-serif;
-  background:linear-gradient(180deg,var(--sky1) 0,var(--sky2) 420px,#f6fbff 100%) fixed;padding-bottom:80px;position:relative}
-body::after{content:"";position:fixed;left:0;right:0;bottom:0;height:56px;z-index:0;pointer-events:none;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='22' viewBox='0 0 60 22'%3E%3Cpath d='M0 22 L4 6 L8 22 L12 10 L16 22 L20 2 L24 22 L28 9 L32 22 L36 5 L40 22 L44 11 L48 22 L52 3 L56 22 L60 8 L60 22Z' fill='%2368b84b'/%3E%3C/svg%3E") repeat-x top/60px 22px,
-   repeating-linear-gradient(90deg,var(--grass1) 0 80px,var(--grass2) 80px 160px) 0 21px/100% 100% no-repeat}
+  background:#f4f6fb;padding-bottom:40px;position:relative}
 .wrap{max-width:940px;margin:0 auto;padding:0 16px;position:relative;z-index:1}
 main.wrap{z-index:2;outline:none;min-height:60vh}
 h1,h2,h3{font-family:"Fredoka","Nunito",sans-serif;color:var(--navy);line-height:1.2;font-weight:600}
@@ -43,7 +40,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 #nav a.on{background:#ffc634;color:#12162e}
 
 /* Clôture sous les titres */
-.rule{height:16px;margin:4px 0 16px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='16'%3E%3Crect x='3' y='0' width='6' height='16' rx='3' fill='%23c9925a'/%3E%3Crect x='0' y='6' width='24' height='3' fill='%239c6a3a'/%3E%3C/svg%3E") repeat-x;max-width:260px}
+.rule{height:4px;margin:8px 0 18px;max-width:260px;border-radius:2px;background:linear-gradient(90deg,var(--c),rgba(255,255,255,0))}
 
 .hero{display:flex;gap:16px;align-items:center}
 .hero svg{flex:none;width:96px;height:96px}
@@ -206,3 +203,20 @@ body.avec-fond .intro p:last-child strong{display:inline-block;animation:brille 
 @keyframes pcrot{from{transform:translate(420px,110px) rotate(0)}to{transform:translate(420px,110px) rotate(360deg)}}
 @keyframes pconde{from{stroke-dashoffset:900}to{stroke-dashoffset:0}}
 @keyframes pcscint{from{opacity:.2}to{opacity:1}}
+
+/* ===== Décor de chaque matière (fichiers dans themes/) ===== */
+body[data-matiere]{background-attachment:fixed}
+body[data-matiere=maths]{background:url(themes/maths.svg),radial-gradient(ellipse at 50% 30%,#2c3d3a 0,#18221f 70%) fixed}
+body[data-matiere=physique-chimie]{background:url(themes/physique-chimie.svg),linear-gradient(160deg,#120f2a 0,#22174a 55%,#0d1430 100%) fixed}
+body[data-matiere=philosophie]{background:url(themes/philosophie.svg),radial-gradient(ellipse at 50% 20%,#fbf5e8 0,#efe3c8 60%,#e3d3b0 100%) fixed}
+body[data-matiere=svt]{background:url(themes/svt.svg),linear-gradient(170deg,#0e2a1b 0,#174a2e 60%,#0b2216 100%) fixed}
+/* textes lisibles sur les décors sombres */
+body.sombre main,body.sombre footer,body.sombre .fil,body.sombre .fil a,body.sombre footer a{color:#e8eef8}
+body.sombre main h1.tmat{color:#fff}
+body.sombre main>.mut,body.sombre .presentation h3{color:#dbe4f3}
+body.sombre main>div>.niv,body.sombre main>.niv{color:#ffd34d}
+body.sombre .rule{background:linear-gradient(90deg,#ffc634,rgba(255,198,52,0))}
+body.sombre .carte .note{color:#dbe4f3}
+body.sombre .card,body.sombre .tile,body.sombre .face,body.sombre .opt{color:var(--ink)}
+body.sombre .tabs button{box-shadow:0 2px 10px rgba(0,0,0,.25)}
+body[data-matiere=philosophie] .card,body[data-matiere=philosophie] .tile{background:#fffdf7}

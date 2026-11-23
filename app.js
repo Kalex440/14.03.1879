@@ -312,6 +312,8 @@
       nav.hidden = false;
       const m = MATIERES.find(x => x.id === mid);
       marquerNav(m ? m.id : mid ? "-" : "");
+      if (m) document.body.dataset.matiere = m.id; else delete document.body.dataset.matiere;
+      document.body.classList.toggle("sombre", !!m && ["maths", "physique-chimie", "svt"].includes(m.id));
       if (mid === "mentions") await pageMentions();
       else if (m && cid) await pageChapitre(m, cid, onglet);
       else if (m) await pageMatiere(m);
