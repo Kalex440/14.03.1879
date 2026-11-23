@@ -223,3 +223,12 @@ body[data-matiere=philosophie] .card,body[data-matiere=philosophie] .tile{backgr
 .presentation .nj{padding:22px}
 .presentation .nj h2{margin-top:0;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
 .presentation .nj .tile b{font-size:17.5px}
+
+/* Bouton et formulaire « Ajouter un chapitre » (mode prof) */
+.tile.ajout{border:2px dashed var(--c);background:rgba(255,255,255,.85);text-align:left;font:inherit;cursor:pointer}
+.ajoutf{display:flex;flex-direction:column;gap:6px;max-width:620px}
+.ajoutf label{font-weight:700}
+.ajoutf input{font:16px "Nunito";padding:10px 12px;border:2px solid var(--line);border-radius:10px}
+.ajoutf .btn{align-self:flex-start;margin-top:8px}
+.etapes{padding-left:0;list-style:none}.etapes li{margin:12px 0}
+.presentation-chap .tile{border-left:6px solid var(--c)}

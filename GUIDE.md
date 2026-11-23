@@ -31,7 +31,15 @@ Pour **créer** un fichier : dans le dossier voulu, clique sur **Add file → Cr
 
 ---
 
-## 2. Ajouter un chapitre (en 3 étapes)
+## 2. Ajouter un chapitre
+
+### Le plus simple : le bouton « Ajouter un chapitre »
+
+1. Une seule fois, sur ton téléphone ou ton ordinateur : ouvre le site avec **#prof** à la fin de l'adresse (`https://kalex440.github.io/revisions-sciences-/#prof`). Ça active le mode prof **sur cet appareil seulement** (pour l'enlever : `#prof-off`).
+2. Va dans une matière : une carte en pointillés **＋ Ajouter un chapitre** apparaît. Les élèves ne la voient pas.
+3. Remplis le titre, le niveau et le résumé, puis suis les 2 boutons : GitHub s'ouvre avec le modèle déjà rempli, et ensuite la liste des chapitres.
+
+### À la main (en 3 étapes)
 
 **Étape 1 : crée le fichier du chapitre.**
 Dans le dossier de la matière (par exemple `contenu/maths/`), crée un fichier `suites.md`. Copie dedans tout le contenu de `contenu/MODELE-chapitre.md`, puis remplace le texte par le tien.

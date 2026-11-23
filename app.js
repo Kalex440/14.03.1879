@@ -47,7 +47,7 @@
   /* ---------- Lecture des fichiers de contenu ---------- */
   async function chargerReglages() {
     const a = entete(await lire("contenu/accueil.md"));
-    SITE = { titre: a.infos.titre || "Révisions", sous: a.infos["sous-titre"] || "", fond: a.infos.fond || "", texte: a.corps };
+    SITE = { titre: a.infos.titre || "Révisions", sous: a.infos["sous-titre"] || "", fond: a.infos.fond || "", depot: a.infos.depot || "", texte: a.corps };
     MATIERES = (await lire("contenu/matieres.txt")).split("\n")
       .filter(l => l.trim() && !l.trim().startsWith("#"))
       .map(l => { const [id, nom, icone, couleur, desc] = l.split("|").map(s => (s || "").trim()); return { id, nom, icone, couleur: couleur || "#1f63d6", desc }; });
@@ -72,7 +72,7 @@
       else if (n === "flashcards" || n === "flashcard" || n === "cartes") parts.flashcards += bloc.replace(/^## .*\n/, "");
       else if (n !== "cours") parts.cours.push(bloc); else parts.cours.push(bloc.replace(/^## .*\n/, ""));
     });
-    const c = { id: cid, titre: infos.titre || cid, niveau: infos.niveau || "", resume: infos.resume || "",
+    const c = { id: cid, type: (infos.type || "").toLowerCase(), titre: infos.titre || cid, niveau: infos.niveau || "", resume: infos.resume || "",
       cours: parts.cours.join("\n").trim(), exercices: lireExos(parts.exercices), qcm: lireQcm(parts.qcm), cartes: lireCartes(parts.flashcards) };
     return (cacheChap[k] = c);
   }
@@ -184,8 +184,10 @@
         return `<a class="tile" href="#${esc(m.id)}/${esc(c.id)}" style="--c:${esc(m.couleur)}">
           ${c.niveau ? `<span class="niv">${esc(c.niveau)}</span>` : ""}<b>${esc(c.titre)}</b>
           ${c.resume ? `<p class="mut">${esc(c.resume)}</p>` : ""}
-          <p class="note">${bouts || "Cours"}${best ? ` · ton meilleur QCM : ${best.s}/${best.n}` : ""}</p></a>`;
-      }).join("")}</div>` : `<div class="card"><p>Les chapitres arrivent bientôt ! 🌱</p></div>`}`;
+          <p class="note">${c.type === "presentation" ? "Ouvrir le chapitre →" : bouts || "Cours"}${best ? ` · ton meilleur QCM : ${best.s}/${best.n}` : ""}</p></a>`;
+      }).join("")}${prof() ? `<button class="tile ajout" id="ajout" style="--c:${esc(m.couleur)}"><b>＋ Ajouter un chapitre</b><p class="mut">Visible seulement en mode prof.</p></button>` : ""}</div>` : `<div class="card"><p>Les chapitres arrivent bientôt ! 🌱</p>${prof() ? `<button class="btn" id="ajout">＋ Ajouter un chapitre</button>` : ""}</div>`}
+      <div id="ajoutForm"></div>`;
+    const bt = main.querySelector("#ajout"); if (bt) bt.onclick = () => formAjout(m);
   }
 
   async function pageChapitre(m, cid, onglet) {
@@ -193,6 +195,13 @@
     try { c = await chapitre(m.id, cid); }
     catch (e) { main.innerHTML = `${fil([["Accueil", "#"], [m.nom, "#" + m.id], ["Introuvable", ""]])}<div class="card"><p>⚠️ Ce chapitre est introuvable.</p></div>`; return; }
     document.title = c.titre + " · " + m.nom;
+    if (c.type === "presentation") {
+      main.innerHTML = `${fil([["Accueil", "#"], [m.nom, "#" + m.id], [c.titre, ""]])}
+        <div style="--c:${esc(m.couleur)}">${c.niveau ? `<span class="niv">${esc(c.niveau)}</span>` : ""}
+        <h1 class="tmat">${esc(c.titre)}</h1><div class="rule"></div>
+        <article class="card cours presentation-chap">${md(c.cours)}</article></div>`;
+      return;
+    }
     const tabs = [["cours", "📖 Cours", c.cours], ["exercices", "✏️ Exercices", c.exercices.length], ["qcm", "✅ QCM", c.qcm.length], ["flashcards", "🃏 Flashcards", c.cartes.length]].filter(t => t[2]);
     if (!tabs.some(t => t[0] === onglet)) onglet = tabs.length ? tabs[0][0] : "cours";
     main.innerHTML = `${fil([["Accueil", "#"], [m.nom, "#" + m.id], [c.titre, ""]])}
@@ -303,10 +312,40 @@
   }
   window.deconnexion = () => { try { localStorage.removeItem("rs:auth"); } catch (e) {} location.hash = ""; route(); };
 
+
+  /* ---------- Mode prof : ajouter un chapitre (ouvre GitHub avec le modèle pré-rempli) ----------
+     Activer : ouvrir le site avec #prof à la fin de l'adresse. Désactiver : #prof-off. */
+  const prof = () => store.get("prof", false) === true;
+  const slug = t => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 50) || "chapitre";
+  function formAjout(m) {
+    const box = main.querySelector("#ajoutForm");
+    box.innerHTML = `<form class="card ajoutf" style="--c:${esc(m.couleur)}"><h2>Nouveau chapitre en ${esc(m.nom)}</h2>
+      <label for="aT">Titre du chapitre</label><input id="aT" required placeholder="Ex. : La conscience">
+      <label for="aN">Niveau</label><input id="aN" placeholder="Ex. : Terminale">
+      <label for="aR">Résumé en une phrase</label><input id="aR" placeholder="Ex. : Suis-je ce que j'ai conscience d'être ?">
+      <button class="btn" type="submit">Préparer le chapitre</button><div id="aOut"></div></form>`;
+    box.scrollIntoView({ behavior: "smooth" }); box.querySelector("#aT").focus();
+    box.querySelector("form").onsubmit = e => {
+      e.preventDefault();
+      const t = box.querySelector("#aT").value.trim(), n = box.querySelector("#aN").value.trim(), r = box.querySelector("#aR").value.trim(), f = slug(t);
+      const modele = `titre: ${t}\nniveau: ${n}\nrésumé: ${r}\n---\n## Cours\n\n### 1. Première partie\n\nÉcris ton cours ici.\n\n## Exercices\n\n### Exercice 1\n\nÉnoncé.\n\nCorrection :\n\nLa correction.\n\n## QCM\n\n? Ta question ?\n- une mauvaise réponse\n+ la bonne réponse\n- une autre mauvaise réponse\n> L'explication.\n\n## Flashcards\n\nRecto :: Verso\n`;
+      const dep = SITE.depot;
+      const out = box.querySelector("#aOut");
+      if (!dep) { out.innerHTML = `<p class="lerr">Ajoute la ligne « depot: Kalex440/nom-du-depot » dans contenu/accueil.md.</p>`; return; }
+      const nouv = `https://github.com/${dep}/new/main/contenu/${encodeURIComponent(m.id)}?filename=${encodeURIComponent(f + ".md")}&value=${encodeURIComponent(modele)}`;
+      const liste = `https://github.com/${dep}/edit/main/contenu/${encodeURIComponent(m.id)}/chapitres.txt`;
+      out.innerHTML = `<ol class="etapes">
+        <li><a class="btn" href="${nouv}" target="_blank" rel="noopener">1. Créer le fichier « ${esc(f)}.md » sur GitHub</a><br><span class="note">Le modèle est déjà rempli : écris ton cours, puis clique sur « Commit changes ».</span></li>
+        <li><a class="btn alt" href="${liste}" target="_blank" rel="noopener">2. L'ajouter à la liste des chapitres</a><br><span class="note">Ajoute cette ligne à la fin, puis « Commit changes » :</span> <code>${esc(f)}</code></li>
+        <li><span class="note">3. Attends 1 à 2 minutes et recharge le site : ton chapitre apparaît ici.</span></li></ol>`;
+    };
+  }
+
   /* ---------- Routeur ---------- */
   async function route() {
     window.papangue && papangue.stop();
     document.body.classList.remove("avec-fond"); ciel.stop();
+    if (location.hash === "#prof" || location.hash === "#prof-off") { store.set("prof", location.hash === "#prof"); history.replaceState(null, "", location.pathname + "#"); }
     const [mid, cid, onglet] = decodeURIComponent(location.hash.slice(1)).split("/");
     try {
       if (!SITE) await chargerReglages();
