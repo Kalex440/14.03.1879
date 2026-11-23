@@ -99,6 +99,45 @@
     });
   }
 
+
+  /* ---------- Animation de l'accueil : étoiles qui scintillent + étoiles filantes ---------- */
+  const ciel = (() => {
+    const calme = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let cv = null, ctx, raf = 0, etoiles = [], filantes = [], W = 0, H = 0, dpr = 1, actif = false;
+    function taille() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight;
+      cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + "px"; cv.style.height = H + "px"; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const n = Math.round(W * H / 9000);
+      etoiles = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.3 + .3, p: Math.random() * 6.28, v: Math.random() * 1.5 + .5, d: Math.random() * .08 + .02, c: Math.random() < .2 ? "255,214,120" : Math.random() < .3 ? "180,205,255" : "255,255,255" }));
+    }
+    function frame(t) {
+      ctx.clearRect(0, 0, W, H);
+      for (const e of etoiles) {
+        const a = .35 + .65 * (.5 + .5 * Math.sin(t / 1000 * e.v + e.p));
+        e.y -= e.d; if (e.y < -2) { e.y = H + 2; e.x = Math.random() * W; }
+        ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, 6.283); ctx.fillStyle = `rgba(${e.c},${a})`; ctx.fill();
+        if (e.r > 1.3) { ctx.beginPath(); ctx.arc(e.x, e.y, e.r * 3, 0, 6.283); ctx.fillStyle = `rgba(${e.c},${a * .12})`; ctx.fill(); }
+      }
+      if (Math.random() < .006 && filantes.length < 2) filantes.push({ x: Math.random() * W * .8 + W * .2, y: Math.random() * H * .4, vx: -(7 + Math.random() * 5), vy: 3 + Math.random() * 2, vie: 1 });
+      filantes = filantes.filter(f => f.vie > 0);
+      for (const f of filantes) {
+        const g = ctx.createLinearGradient(f.x, f.y, f.x - f.vx * 12, f.y - f.vy * 12);
+        g.addColorStop(0, `rgba(255,240,200,${f.vie})`); g.addColorStop(1, "rgba(255,240,200,0)");
+        ctx.strokeStyle = g; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(f.x, f.y); ctx.lineTo(f.x - f.vx * 12, f.y - f.vy * 12); ctx.stroke();
+        f.x += f.vx; f.y += f.vy; f.vie -= .018;
+      }
+      raf = requestAnimationFrame(frame);
+    }
+    function start() {
+      if (calme || actif) return; actif = true;
+      if (!cv) { cv = document.createElement("canvas"); cv.className = "ciel"; cv.setAttribute("aria-hidden", "true"); document.body.prepend(cv); ctx = cv.getContext("2d"); addEventListener("resize", () => actif && taille()); }
+      cv.hidden = false; taille(); raf = requestAnimationFrame(frame);
+    }
+    function stop() { actif = false; cancelAnimationFrame(raf); if (cv) cv.hidden = true; }
+    document.addEventListener("visibilitychange", () => { if (!actif) return; if (document.hidden) cancelAnimationFrame(raf); else raf = requestAnimationFrame(frame); });
+    return { start, stop };
+  })();
+
   /* ---------- Les pages ---------- */
   function marquerNav(v) { nav.querySelectorAll("a").forEach(a => { const on = a.dataset.v === v; a.classList.toggle("on", on); on ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"); }); }
   function fil(items) { return `<nav class="fil" aria-label="Fil d'Ariane">${items.map((it, i) => i < items.length - 1 ? `<a href="${it[1]}">${esc(it[0])}</a> <span aria-hidden="true">›</span> ` : `<span aria-current="page">${esc(it[0])}</span>`).join("")}</nav>`; }
@@ -108,6 +147,7 @@
     if (SITE.fond) {
       document.body.style.setProperty("--fond", `url("${SITE.fond.replace(/^images\//, "contenu/images/").replace(/"/g, "")}")`);
       document.body.classList.add("avec-fond");
+      ciel.start();
     }
     const comptes = await Promise.all(MATIERES.map(m => listeChapitres(m.id).then(l => l.length)));
     main.innerHTML = `
@@ -117,7 +157,7 @@
       </div>
       <div class="intro">${md(SITE.texte)}</div>
       <div class="matieres">${MATIERES.map((m, i) => `
-        <a class="matiere" href="#${esc(m.id)}" style="--c:${esc(m.couleur)}">
+        <a class="matiere" href="#${esc(m.id)}" style="--c:${esc(m.couleur)};--i:${i}">
           <span class="mic" aria-hidden="true">${esc(m.icone)}</span>
           <b>${esc(m.nom)}</b>
           <span class="mut">${esc(m.desc || "")}</span>
@@ -236,7 +276,7 @@
   async function sha256(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
   function pageConnexion() {
     document.title = "Connexion · " + (SITE ? SITE.titre : "Révisions");
-    nav.hidden = true; document.body.classList.add("avec-fond");
+    nav.hidden = true; document.body.classList.add("avec-fond"); ciel.start();
     if (SITE && SITE.fond) document.body.style.setProperty("--fond", `url("${SITE.fond.replace(/^images\//, "contenu/images/").replace(/"/g, "")}")`);
     main.innerHTML = `<form class="card login" id="login" autocomplete="on">
       <h1>Connexion</h1><p class="mut">Identifie-toi pour accéder aux révisions.</p>
@@ -261,7 +301,7 @@
   /* ---------- Routeur ---------- */
   async function route() {
     window.papangue && papangue.stop();
-    document.body.classList.remove("avec-fond");
+    document.body.classList.remove("avec-fond"); ciel.stop();
     const [mid, cid, onglet] = decodeURIComponent(location.hash.slice(1)).split("/");
     try {
       if (!SITE) await chargerReglages();

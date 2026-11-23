@@ -132,7 +132,7 @@ footer .wrap{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 @keyframes looping{to{transform:rotate(-360deg)}}
 
 @media (max-width:560px){h1{font-size:26px}.hero svg{width:64px;height:64px}.papangue svg{width:96px;height:60px}.matieres{grid-template-columns:1fr 1fr;gap:10px}.matiere{padding:14px}.matiere .mic{font-size:34px}.matiere b{font-size:19px}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (prefers-reduced-motion:reduce){*,body::before{transition:none!important;animation:none!important}}
 
 /* Image de fond de l'accueil (réglée par la ligne « fond: » de contenu/accueil.md) */
 body.avec-fond{background:#0b1024}
@@ -162,3 +162,20 @@ body.avec-fond .rule{height:3px;margin:10px 0 18px;background:linear-gradient(90
 #nav a.out{border:1.5px solid rgba(255,255,255,.5)}
 #nav[hidden]{display:none}
 body.avec-fond .login h1{color:var(--navy)}
+
+/* ===== Accueil animé ===== */
+canvas.ciel{position:fixed;inset:0;z-index:0;pointer-events:none}
+body.avec-fond::before{animation:zoomlent 45s ease-in-out infinite alternate;transform-origin:70% 40%}
+@keyframes zoomlent{from{transform:scale(1)}to{transform:scale(1.12) translate(-1.5%,1%)}}
+body.avec-fond .hero,body.avec-fond .intro{animation:apparait .9s ease-out both}
+body.avec-fond .intro{animation-delay:.15s}
+body.avec-fond .matiere{animation:monte .7s cubic-bezier(.2,.8,.3,1.2) both;animation-delay:calc(.35s + var(--i,0) * .12s)}
+body.avec-fond .matiere:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 0 0 2px var(--c),0 12px 30px rgba(255,198,52,.25)}
+body.avec-fond .matiere .mic{display:inline-block;transition:transform .3s}
+body.avec-fond .matiere:hover .mic{transform:rotate(-8deg) scale(1.15)}
+body.avec-fond .intro p:last-child strong{display:inline-block;animation:brille 2.6s ease-in-out infinite}
+@keyframes apparait{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes monte{from{opacity:0;transform:translateY(30px) scale(.95)}to{opacity:1;transform:none}}
+@keyframes brille{0%,100%{text-shadow:0 0 4px rgba(255,198,52,.3)}50%{text-shadow:0 0 14px rgba(255,198,52,.9),0 0 2px #fff}}
+.sunicon{animation:tourne 30s linear infinite}
+@media (prefers-reduced-motion:reduce){canvas.ciel{display:none}}
