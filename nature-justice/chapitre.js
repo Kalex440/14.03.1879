@@ -17,6 +17,7 @@ var CHAP = (function () {
     else if (c && /^[+-] /.test(l)) { if (l[0] === "+") c.a = c.o.length; c.o.push(clean(l.slice(2))); }
     else if (c && l.startsWith("> ")) c.e += (c.e ? " " : "") + clean(l.slice(2));
   });
+  out.etudes = /^## Études? de texte/m.test(body);
   out.qcm = qcm.filter(x => x.a >= 0 && x.o.length >= 2);
   /* Flashcards */
   out.flash = (secs["Flashcards"] || []).filter(l => l.includes("::")).map(l => { const [f, b] = l.split("::"); return { th: "nature", f: clean(f), b: clean(b) }; });

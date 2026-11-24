@@ -217,7 +217,7 @@
       <div style="--c:${esc(m.couleur)}">
       ${c.niveau ? `<span class="niv">${esc(c.niveau)}</span>` : ""}
       <h1 class="tmat">${esc(c.titre)}</h1><div class="rule"></div>
-      ${menuPhilo(tabs, onglet, m, cid)}
+      ${menuPhilo(tabs, onglet, m, cid, c)}
       <div id="panneau" role="tabpanel" aria-labelledby="tab-${onglet}" tabindex="0"></div></div>`;
     const tl = main.querySelector(".tabs, .menuchap");
     tl.addEventListener("click", e => { const g = e.target.closest(".nbtn"); if (g) { const o = !g.parentNode.classList.contains("open"); tl.querySelectorAll(".ngroup").forEach(x => { x.classList.remove("open"); x.firstElementChild.setAttribute("aria-expanded", "false"); }); g.parentNode.classList.toggle("open", o); g.setAttribute("aria-expanded", o); return; }
@@ -229,8 +229,7 @@
     });
     const p = main.querySelector("#panneau");
     if (onglet === "cours") p.innerHTML = `<article class="card cours">${md(c.cours || "*Le cours arrive bientôt.*")}</article>`;
-    if (onglet === "etudes") p.innerHTML = (m.id === "philosophie" && !qcmOk(m, cid)) ? `<div class="card"><h2>🔒 Étude de texte verrouillée</h2><p>Obtiens au moins <b>12/20</b> au <a href="${lj(m, cid, "qcm")}">QCM de ce chapitre</a> pour débloquer les études de texte.</p></div>` : c.etudes.map(x => `<section class="card"><h2>${md(x.titre, true)}</h2>${md(x.enonce)}
-      ${x.corr ? `<details><summary>Voir la correction</summary><div class="corr">${md(x.corr)}</div></details>` : ""}</section>`).join("");
+    if (onglet === "etudes") etudes(p, m, c, cid);
     if (onglet === "exercices") p.innerHTML = c.exercices.map((x, i) => `<section class="card"><h2>${md(x.titre, true)}</h2>${md(x.enonce)}
       ${x.corr ? `<details><summary>Voir la correction</summary><div class="corr">${md(x.corr)}</div></details>` : ""}</section>`).join("");
     if (onglet === "qcm") qcm(p, m, c);
@@ -241,16 +240,45 @@
 
   /* ---------- menu des chapitres de philosophie (comme le site nature-justice) ---------- */
   const qcmOk = (m, cid) => { try { const r = JSON.parse(localStorage.getItem(`c:${m.id}/${cid}:myResults`) || "{}").qcm; return !!r && Math.max(r.best ?? r.s, r.s) >= 12; } catch (e) { return false; } };
+  const resKey = (m, cid) => `c:${m.id}/${cid}:myResults`;
+  const best = (m, cid, k) => { try { const r = JSON.parse(localStorage.getItem(resKey(m, cid)) || "{}")[k]; return r ? Math.max(r.best ?? r.s, r.s) : -1; } catch (e) { return -1; } };
+  const etudeOk = (m, cid) => best(m, cid, "etude") >= 12;
   const lj = (m, cid, v) => `nature-justice/index.html?m=${m.id}&chap=${cid}#${v}`;
+  /* ---------- Études de texte notées (auto-évaluation), débloquées à 12/20 au QCM ---------- */
+  function etudes(p, m, c, cid) {
+    if (m.id === "philosophie" && !qcmOk(m, cid)) { p.innerHTML = `<div class="card"><h2>🔒 Études de texte verrouillées</h2><p>Obtiens au moins <b>12/20</b> au <a href="${lj(m, cid, "qcm")}">QCM de ce chapitre</a> pour les débloquer.</p></div>`; return; }
+    const meilleur = best(m, cid, "etude");
+    p.innerHTML = `<p class="note">Rédige tes réponses, affiche la correction, puis note-toi honnêtement : <b>1</b> point si c'est juste, <b>0,5</b> si c'est partiel, <b>0</b> sinon. Il faut au moins <b>12/20</b> à une étude de texte pour débloquer les textes à trous.${meilleur >= 0 ? ` Ta meilleure note : <b>${String(Math.round(meilleur * 10) / 10).replace(".", ",")}/20</b>.` : ""}</p>` + c.etudes.map((x, i) => {
+      const nq = Math.max(1, (x.enonce.match(/^\s*\d+\./gm) || []).length);
+      return `<section class="card etude" data-i="${i}" data-nq="${nq}"><h2>${md(x.titre, true)}</h2>${md(x.enonce)}
+        <label class="note" for="rep${i}">Tes réponses</label><textarea id="rep${i}" rows="5" style="width:100%"></textarea>
+        <button class="btn sm voir" type="button">Voir la correction</button>
+        <div class="apresc" hidden><div class="corr">${md(x.corr)}</div>
+          <p><b>Ma note, question par question :</b></p>
+          ${Array.from({ length: nq }, (_, q) => `<label>Q${q + 1} <select class="nq"><option value="0">0 – faux</option><option value="0.5">0,5 – partiel</option><option value="1">1 – juste</option></select></label> `).join("")}
+          <button class="btn sm valider" type="button">Valider ma note</button> <span class="resultat note" aria-live="polite"></span></div></section>`; }).join("");
+    p.querySelectorAll(".etude").forEach(s => {
+      s.querySelector(".voir").onclick = () => { s.querySelector(".apresc").hidden = false; s.querySelector(".voir").hidden = true; };
+      s.querySelector(".valider").onclick = () => {
+        const nq = +s.dataset.nq, tot = [...s.querySelectorAll(".nq")].reduce((t, e) => t + +e.value, 0), note = Math.round(tot / nq * 200) / 10;
+        let r = {}; try { r = JSON.parse(localStorage.getItem(resKey(m, cid)) || "{}"); } catch (e) {}
+        const old = r.etude ? Math.max(r.etude.best ?? r.etude.s, r.etude.s) : -1;
+        r.etude = { s: note, best: Math.max(old, note), n: 1 };
+        try { localStorage.setItem(resKey(m, cid), JSON.stringify(r)); } catch (e) {}
+        s.querySelector(".resultat").textContent = `${String(note).replace(".", ",")}/20 ` + (note >= 12 ? "🔓 Bravo, les textes à trous sont débloqués !" : "🔒 Il faut 12/20 pour débloquer les textes à trous : relis la correction et réessaie.");
+      };
+    });
+  }
+
   /* sections « Pour la dissertation » / « Sujets types » du cours */
   function bacTexte(cours) {
     const out = []; let on = false;
     (cours || "").split("\n").forEach(l => { const h = l.match(/^### (.+)/); if (h) on = /dissertation|sujets? type|sujets? de bac/i.test(h[1]); if (on) out.push(l); });
     return out.join("\n").trim();
   }
-  function menuPhilo(tabs, onglet, m, cid) {
-    const nat = { qcm: "qcm", trous: "trous", flashcards: "flash" };
-    const bt = k => { const t = tabs.find(x => x[0] === k); if (t && m.id === "philosophie" && nat[k]) return `<a href="${lj(m, cid, nat[k])}">${k === "trous" && !qcmOk(m, cid) ? "🔒 " : ""}${t[1]}</a>`; return t ? `<button role="tab" id="tab-${k}" aria-selected="${k === onglet}" data-t="${k}">${t[1]}</button>` : ""; };
+  function menuPhilo(tabs, onglet, m, cid, c0) {
+    const nat = { qcm: "qcm", trous: "trous", flashcards: "flash", etudes: null };
+    const bt = k => { const t = tabs.find(x => x[0] === k); if (t && m.id === "philosophie" && nat[k]) return `<a href="${lj(m, cid, nat[k])}">${(k === "trous" && !(c0.etudes.length ? etudeOk(m, cid) : qcmOk(m, cid))) || (k === "etudes" && !qcmOk(m, cid)) ? "🔒 " : ""}${t[1]}</a>`; return t ? `<button role="tab" id="tab-${k}" aria-selected="${k === onglet}" data-t="${k}">${k === "etudes" && m.id === "philosophie" && !qcmOk(m, cid) ? "🔒 " : ""}${t[1]}</button>` : ""; };
     const grp = (nom, ks, extra) => { const h = ks.map(bt).join("") + (extra || ""); return h ? `<div class="ngroup${ks.includes(onglet) ? " actif" : ""}"><button class="nbtn" aria-expanded="false">${nom} ▾</button><div class="nmenu">${h}</div></div>` : ""; };
     return `<nav class="menuchap" aria-label="Menu du chapitre"><a href="#${m.id}">Accueil</a>${grp("📖 Apprendre", ["cours", "flashcards", "bac"])}${grp("✏️ S'entraîner", ["qcm", "etudes", "exercices", "trous"])}${grp("🎮 Jouer", [], ["jardin|🌼 Cartes mentales", "mots|🔤 Mots mêlés", "direct|👥 Jouer entre amis"].map(x => `<a href="${lj(m, cid, x.split("|")[0])}">${x.split("|")[1]}</a>`).join(""))}<a href="${lj(m, cid, "mes-notes")}">Mes notes</a></nav>`;
   }
