@@ -256,3 +256,12 @@ body[data-matiere=philosophie] .card,body[data-matiere=philosophie] .tile{backgr
 .menuchap .nmenu button:hover{background:#e6f0ff}
 .menuchap .nmenu button[aria-selected=true]{background:#1f63d6;color:#fff}
 .menuchap .nmenu a{font:700 15px "Nunito";color:#12306b;text-decoration:none;border-radius:10px;padding:9px 12px}.menuchap .nmenu a:hover{background:#e6f0ff}
+
+/* profil / avatar / bilan */
+.profil{max-width:640px}.avatars{display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:8px;margin:10px 0}
+.av{font-size:30px;line-height:1;padding:10px 0;border:2px solid #c8d4f0;border-radius:14px;background:#fff;cursor:pointer}
+.av.on{border-color:#1f63d6;background:#e6f0ff;box-shadow:0 0 0 3px #bcd3ff}
+.profil input{width:100%;max-width:320px;display:block;margin:4px 0 10px}
+table.notes{border-collapse:collapse;width:100%;font-size:15px}table.notes th,table.notes td{text-align:left;padding:6px 8px;border-bottom:1px solid #d9e2f5}
+.erreurs{padding-left:20px}.erreurs li{margin:6px 0}
+#navProfil{white-space:nowrap}

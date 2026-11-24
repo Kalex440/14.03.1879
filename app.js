@@ -53,7 +53,7 @@
       .map(l => { const [id, nom, icone, couleur, desc] = l.split("|").map(s => (s || "").trim()); return { id, nom, icone, couleur: couleur || "#1f63d6", desc }; });
     document.getElementById("brandTitle").textContent = SITE.titre;
     document.getElementById("brandSmall").textContent = SITE.sous || "Révisions";
-    nav.innerHTML = `<a href="#" data-v="">Accueil</a>` + MATIERES.map(m => `<a href="#${esc(m.id)}" data-v="${esc(m.id)}"><span aria-hidden="true">${esc(m.icone)}</span> ${esc(m.nom)}</a>`).join("") + `<a href="#" class="out" onclick="deconnexion();return false">Déconnexion</a>`;
+    nav.innerHTML = `<a href="#" data-v="">Accueil</a>` + MATIERES.map(m => `<a href="#${esc(m.id)}" data-v="${esc(m.id)}"><span aria-hidden="true">${esc(m.icone)}</span> ${esc(m.nom)}</a>`).join("") + `<a href="#profil" data-v="profil" id="navProfil">🙂 Mon profil</a><a href="#" class="out" onclick="deconnexion();return false">Déconnexion</a>`;
   }
   async function listeChapitres(mid) {
     try {
@@ -294,7 +294,7 @@
       if (m.id === "philosophie" && nat[k]) return `<a href="${lj(m, cid, nat[k])}">${kk ? verrou(kk) : ""}${t[1]}</a>`;
       return `<button role="tab" id="tab-${k}" aria-selected="${k === onglet}" data-t="${k}">${kk ? verrou(kk) : ""}${t[1]}</button>`; };
     const grp = (nom, ks, extra) => { const h = ks.map(bt).join("") + (extra || ""); return h ? `<div class="ngroup${ks.includes(onglet) ? " actif" : ""}"><button class="nbtn" aria-expanded="false">${nom} ▾</button><div class="nmenu">${h}</div></div>` : ""; };
-    return `<nav class="menuchap" aria-label="Menu du chapitre"><a href="#${m.id}">Accueil</a>${grp("📖 Apprendre", ["cours", "flashcards", "bac"])}${grp("✏️ S'entraîner", ["qcm", "etudes", "exercices", "trous"])}${grp("🎮 Jouer", [], ["jardin|🌼 Cartes mentales", "mots|🔤 Mots mêlés", "direct|👥 Jouer entre amis"].map(x => `<a href="${lj(m, cid, x.split("|")[0])}">${x.split("|")[1]}</a>`).join(""))}<a href="${lj(m, cid, "mes-notes")}">Mes notes</a></nav>`;
+    return `<nav class="menuchap" aria-label="Menu du chapitre"><a href="#${m.id}">Accueil</a>${grp("📖 Apprendre", ["cours", "flashcards", "bac"])}${grp("✏️ S'entraîner", ["qcm", "etudes", "exercices", "trous"])}${grp("🎮 Jouer", [], ["jardin|🌼 Cartes mentales", "mots|🔤 Mots mêlés", "direct|👥 Jouer entre amis"].map(x => `<a href="${lj(m, cid, x.split("|")[0])}">${x.split("|")[1]}</a>`).join(""))}<a href="#profil">Mes notes</a></nav>`;
   }
 
   /* ---------- QCM ---------- */
@@ -312,7 +312,7 @@
       const b = e.target.closest(".opt"); if (!b || fs.dataset.done) return;
       const q = qs[fs.dataset.i]; const o = q.o[b.dataset.j]; fs.dataset.done = 1; faites++;
       fs.querySelectorAll(".opt").forEach((x, j) => { x.disabled = true; if (q.o[j].ok) x.classList.add("ok"); });
-      if (o.ok) score++; else b.classList.add("ko");
+      if (o.ok) score++; else { b.classList.add("ko"); noterErreur(m.id + "/" + c.id, q.q); }
       fs.querySelector(".fb").innerHTML = `<p><b>${o.ok ? "✅ Bonne réponse !" : "❌ Raté."}</b> ${q.e ? md(q.e, true) : ""}</p>`;
       p.querySelector("#sc").textContent = score;
       if (faites === qs.length) {
@@ -439,21 +439,123 @@
     };
   }
 
+  /* ---------- Profil : avatar, notes, erreurs fréquentes, envoi VOLONTAIRE à Kendji ---------- */
+  const AVATARS = ["🦊", "🐼", "🦁", "🐯", "🐸", "🐧", "🦉", "🐙", "🦄", "🐲", "🚀", "🪐", "⚛️", "🧪", "🎸", "⚽"];
+  const avatar = () => store.get("avatar", ""), pseudo = () => store.get("pseudo", "");
+  const MAIL_URL = (() => { const p = ["moc.liamg", "@", "31450073", "ijdnek"]; return "https://formsubmit.co/ajax/" + p.reverse().map(x => [...x].reverse().join("")).join(""); })();
+  function noterErreur(cle, question) { const e = store.get("erreurs", {}); const q = String(question).slice(0, 200); (e[cle] = e[cle] || {})[q] = (e[cle][q] || 0) + 1; store.set("erreurs", e); }
+  const fmt1 = n => String(Math.round(n * 10) / 10).replace(".", ",");
+  const NOMS_TYPE = { qcm: "QCM", etude: "Étude de texte", exo: "Exercices" };
+  function majNavProfil() { const l = nav.querySelector("#navProfil"); let b = nav.querySelector("#navBilan"); if (prof() && !b && l) { l.insertAdjacentHTML("beforebegin", `<a href="#bilan" data-v="bilan" id="navBilan">📊 Bilan</a>`); } else if (!prof() && b) b.parentNode.removeChild(b); if (l) l.innerHTML = `<span aria-hidden="true">${esc(avatar() || "🙂")}</span> ${esc(pseudo() || "Mon profil")}`; }
+  async function titreChap(cle) { const [mid, cid] = cle.split("/"); const m = MATIERES.find(x => x.id === mid); if (!m) return cle === "philosophie/nature-justice" ? "Philosophie · La nature et la justice" : cle; try { return m.nom + " · " + (await chapitre(mid, cid)).titre; } catch (e) { return cle; } }
+  async function collecterNotes() {
+    const out = [];
+    for (const m of MATIERES) for (const cid of await listeChapitres(m.id)) {
+      let c; try { c = await chapitre(m.id, cid); } catch (e) { continue; }
+      if (c.type === "presentation") continue;
+      const titre = m.nom + " · " + c.titre, q = store.get(`qcm:${m.id}/${cid}`, null);
+      if (q) out.push({ chap: titre, type: "QCM", note: q.s / q.n * 20 });
+      let r = {}; try { r = JSON.parse(localStorage.getItem(`c:${m.id}/${cid}:myResults`) || "{}"); } catch (e) {}
+      Object.keys(r).forEach(k => { const t = NOMS_TYPE[k] || (k.startsWith("trou-") ? "Texte à trous" : k.startsWith("carte-") ? "Carte mentale" : null); if (t) out.push({ chap: titre, type: t, note: Math.max(0, Math.max(r[k].best ?? r[k].s, r[k].s)) / (r[k].m || 20) * 20 }); });
+    }
+    let r = {}; try { r = JSON.parse(localStorage.getItem("myResults") || "{}"); } catch (e) {}
+    Object.keys(r).forEach(k => { const t = k === "qcm" ? "QCM" : k.startsWith("etude-") ? "Étude de texte" : k.startsWith("trou-") ? "Texte à trous" : k.startsWith("carte-") ? "Carte mentale" : null; if (t && r[k].m) out.push({ chap: "Philosophie · La nature et la justice", type: t, note: Math.max(0, Math.max(r[k].best ?? r[k].s, r[k].s)) / r[k].m * 20 }); });
+    return out;
+  }
+  async function listeErreurs() {
+    const e = store.get("erreurs", {}), l = [];
+    for (const cle of Object.keys(e)) { const t = await titreChap(cle); Object.keys(e[cle]).forEach(q => l.push({ chap: t, q, n: e[cle][q] })); }
+    return l.sort((x, y) => y.n - x.n);
+  }
+  const b64 = o => btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+  async function pageProfil() {
+    document.title = "Mon profil · " + (SITE ? SITE.titre : "Révisions");
+    const premiere = !avatar();
+    main.innerHTML = `<div class="card profil"><h1>${premiere ? "Choisis ton avatar" : "Mon profil"}</h1>
+      <p class="mut">Ton avatar et ton pseudo restent <b>sur ton appareil</b>. Utilise un pseudo plutôt que ton nom complet.</p>
+      <div class="avatars" role="radiogroup" aria-label="Avatar">${AVATARS.map(x => `<button type="button" class="av${x === avatar() ? " on" : ""}" role="radio" aria-checked="${x === avatar()}" aria-label="Avatar ${x}" data-a="${x}">${x}</button>`).join("")}</div>
+      <label for="pPseudo">Prénom ou pseudo</label><input id="pPseudo" maxlength="30" value="${esc(pseudo())}" placeholder="Ex. : Léa T2">
+      <button class="btn" id="pOk" type="button">${premiere ? "C'est parti !" : "Enregistrer"}</button> <span class="note" id="pMsg" aria-live="polite"></span></div>
+      <div id="pNotes"></div>`;
+    let choix = avatar();
+    main.querySelectorAll(".av").forEach(b => b.onclick = () => { choix = b.dataset.a; main.querySelectorAll(".av").forEach(x => { x.classList.toggle("on", x === b); x.setAttribute("aria-checked", x === b); }); });
+    main.querySelector("#pOk").onclick = () => {
+      if (!choix) { main.querySelector("#pMsg").textContent = "Choisis d'abord un avatar."; return; }
+      store.set("avatar", choix); store.set("pseudo", main.querySelector("#pPseudo").value.trim()); majNavProfil();
+      if (premiere) { location.hash = ""; return; }
+      main.querySelector("#pMsg").textContent = "Enregistré ✔";
+    };
+    if (premiere) return;
+    const box = main.querySelector("#pNotes"); box.innerHTML = `<div class="card"><p class="note">Chargement de tes notes…</p></div>`;
+    const notes = await collecterNotes(), err = await listeErreurs(), envoye = store.get("envoi", 0);
+    box.innerHTML = `<div class="card"><h2>Mes notes</h2>${notes.length ? `<table class="notes"><thead><tr><th>Chapitre</th><th>Épreuve</th><th>Meilleure note</th></tr></thead><tbody>${notes.map(n => `<tr><td>${esc(n.chap)}</td><td>${esc(n.type)}</td><td>${fmt1(n.note)}/20</td></tr>`).join("")}</tbody></table>` : `<p class="note">Pas encore de note : fais un QCM ou une étude de texte !</p>`}</div>
+      <div class="card"><h2>Mes erreurs les plus fréquentes</h2>${err.length ? `<ol class="erreurs">${err.slice(0, 10).map(x => `<li><b>${x.n}×</b> ${esc(x.q)} <span class="note">(${esc(x.chap)})</span></li>`).join("")}</ol><p class="note">Revois ces points dans le cours avant de refaire le QCM.</p>` : `<p class="note">Aucune erreur enregistrée pour l'instant.</p>`}</div>
+      <div class="card"><h2>Envoyer mes résultats à Kendji</h2>
+        <p class="note">C'est <b>facultatif</b>. Si tu es d'accord, Kendji reçoit par e-mail (via le service FormSubmit) : ton pseudo, ton avatar, tes notes et la liste des questions que tu rates le plus. Il s'en sert pour t'aider à réviser, et les supprime à la fin de l'année scolaire ou plus tôt si tu le demandes. Voir les <a href="#mentions">mentions légales</a>.</p>
+        <label class="rem"><input type="checkbox" id="pOui"> Je suis d'accord pour envoyer ces informations à Kendji.</label>
+        <button class="btn" id="pEnvoi" type="button" disabled>Envoyer</button> <span class="note" id="pEnvMsg" aria-live="polite">${envoye ? "Dernier envoi : " + new Date(envoye).toLocaleString("fr-FR") : ""}</span></div>`;
+    const oui = box.querySelector("#pOui"), bt = box.querySelector("#pEnvoi"), msg = box.querySelector("#pEnvMsg");
+    oui.onchange = () => { bt.disabled = !oui.checked; };
+    bt.onclick = async () => {
+      if (!oui.checked) return;
+      if (!pseudo()) { msg.textContent = "Ajoute d'abord un prénom ou un pseudo ci-dessus (puis Enregistrer)."; return; }
+      bt.disabled = true; msg.textContent = "Envoi…";
+      const nom = `${avatar()} ${pseudo()}`, moy = notes.length ? notes.reduce((t, n) => t + n.note, 0) / notes.length : null;
+      const corps = { _subject: `📚 Résultats 14.03.1879 — ${nom}${moy === null ? "" : " : moyenne " + fmt1(moy) + "/20"}`, _template: "table", _captcha: "false",
+        "Élève": nom, "Moyenne des épreuves": moy === null ? "—" : fmt1(moy) + "/20",
+        "Notes": notes.map(n => `• ${n.chap} — ${n.type} : ${fmt1(n.note)}/20`).join("\n") || "—",
+        "Erreurs fréquentes": err.slice(0, 15).map(x => `• ${x.n}× ${x.q} (${x.chap})`).join("\n") || "—",
+        "DONNEES": "DONNEES:" + b64({ v: 1, p: pseudo(), a: avatar(), n: notes.map(n => [n.chap, n.type, Math.round(n.note * 10) / 10]), e: err.slice(0, 30).map(x => [x.chap, x.q, x.n]) }),
+        "Date": new Date().toLocaleString("fr-FR") };
+      try {
+        const r = await fetch(MAIL_URL, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(corps) });
+        const j = await r.json().catch(() => ({}));
+        if (r.ok && String(j.success) !== "false") { store.set("envoi", Date.now()); msg.textContent = "✔ Envoyé à Kendji. Merci !"; } else throw new Error("x");
+      } catch (e) { msg.textContent = "L'envoi n'a pas marché (connexion ?). Réessaie."; bt.disabled = false; }
+    };
+  }
+
+  /* ---------- Bilan de la classe (mode prof) : colle ici les e-mails reçus ---------- */
+  function pageBilan() {
+    document.title = "Bilan de la classe";
+    main.innerHTML = `<div class="card"><h1>📊 Bilan de la classe</h1>
+      <p class="mut">Colle ici le texte des e-mails reçus (un ou plusieurs, à la suite). Le site repère la ligne « DONNEES: » de chaque élève et calcule les erreurs les plus fréquentes. Rien n'est envoyé : tout se passe dans ton navigateur.</p>
+      <textarea id="bIn" rows="8" style="width:100%" placeholder="Colle les e-mails ici…"></textarea><button class="btn" id="bGo" type="button">Calculer le bilan</button></div><div id="bOut"></div>`;
+    main.querySelector("#bGo").onclick = () => {
+      const eleves = {}; [...main.querySelector("#bIn").value.matchAll(/DONNEES:([A-Za-z0-9+/=]+)/g)].forEach(x => { try { const d = JSON.parse(decodeURIComponent(escape(atob(x[1])))); eleves[d.p + "|" + d.a] = d; } catch (e) {} });
+      const L = Object.values(eleves), N = L.length, out = main.querySelector("#bOut");
+      if (!N) { out.innerHTML = `<div class="card"><p class="lerr">Aucune donnée trouvée. Colle le texte complet des e-mails (la ligne « DONNEES: » doit y être).</p></div>`; return; }
+      const err = {}; L.forEach(d => d.e.forEach(([c, q, n]) => { const k = c + "||" + q; (err[k] = err[k] || { c, q, n: 0, el: 0 }); err[k].n += n; err[k].el++; }));
+      const top = Object.values(err).sort((a, b) => b.el - a.el || b.n - a.n).slice(0, 15);
+      const parChap = {}; L.forEach(d => d.n.forEach(([c, t, n]) => { (parChap[c] = parChap[c] || []).push(n); }));
+      const moyChap = Object.keys(parChap).map(c => ({ c, m: parChap[c].reduce((s, x) => s + x, 0) / parChap[c].length, n: parChap[c].length })).sort((a, b) => a.m - b.m);
+      const bas = L.map(d => ({ p: d.a + " " + d.p, m: d.n.length ? d.n.reduce((s, x) => s + x[2], 0) / d.n.length : null })).filter(x => x.m !== null).sort((a, b) => a.m - b.m);
+      out.innerHTML = `<div class="card"><h2>${N} élève${N > 1 ? "s" : ""} analysé${N > 1 ? "s" : ""}</h2>
+        <h3>Erreurs les plus fréquentes</h3><ol class="erreurs">${top.map(x => `<li><b>${x.el}/${N} élève${x.el > 1 ? "s" : ""}</b> (${x.n} erreur${x.n > 1 ? "s" : ""}) : ${esc(x.q)} <span class="note">(${esc(x.c)})</span></li>`).join("") || "<li>Aucune erreur enregistrée.</li>"}</ol>
+        <h3>Moyenne par chapitre (du plus faible au plus fort)</h3><ul>${moyChap.map(x => `<li>${esc(x.c)} : <b>${fmt1(x.m)}/20</b> (${x.n} note${x.n > 1 ? "s" : ""})</li>`).join("")}</ul>
+        <h3>Élèves à accompagner en priorité</h3><ul>${bas.slice(0, 5).map(x => `<li>${esc(x.p)} : ${fmt1(x.m)}/20</li>`).join("")}</ul></div>`;
+    };
+  }
+
   /* ---------- Routeur ---------- */
   async function route() {
     window.papangue && papangue.stop();
     document.body.classList.remove("avec-fond"); ciel.stop();
     if (location.hash === "#prof" || location.hash === "#prof-off") { store.set("prof", location.hash === "#prof"); history.replaceState(null, "", location.pathname + "#"); }
-    const [mid, cid, onglet] = decodeURIComponent(location.hash.slice(1)).split("/");
+    let [mid, cid, onglet] = decodeURIComponent(location.hash.slice(1)).split("/");
     try {
       if (!SITE) await chargerReglages();
       if (mid !== "mentions" && !connecte()) { pageConnexion(); return; }
       nav.hidden = false;
+      if (!avatar() && mid !== "mentions" && mid !== "profil") { history.replaceState(null, "", "#profil"); mid = "profil"; cid = onglet = undefined; }
+      majNavProfil();
       const m = MATIERES.find(x => x.id === mid);
       marquerNav(m ? m.id : mid ? "-" : "");
       if (m) document.body.dataset.matiere = m.id; else delete document.body.dataset.matiere;
       document.body.classList.toggle("sombre", !!m && ["maths", "physique-chimie", "svt"].includes(m.id));
       if (mid === "mentions") await pageMentions();
+      else if (mid === "profil") await pageProfil();
+      else if (mid === "bilan" && prof()) pageBilan();
       else if (m && cid) await pageChapitre(m, cid, onglet);
       else if (m) await pageMatiere(m);
       else await pageAccueil();

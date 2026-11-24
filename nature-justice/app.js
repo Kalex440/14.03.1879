@@ -154,6 +154,7 @@ $("#qList").addEventListener("click",async e=>{
   const i=+b.dataset.q,k=+b.dataset.k,q=QCM[i]; if(qState.ans[i]!==null) return;
   qState.ans[i]=k; const card=$("#q"+i);
   card.querySelectorAll(".opt").forEach(o=>{o.disabled=true;const kk=+o.dataset.k;if(kk===q.a)o.classList.add("ok");if(kk===k&&k!==q.a&&k!==-1)o.classList.add("ko")});
+  if(k!==q.a&&k!==-1){ try{ const E=JSON.parse(localStorage.getItem("rs:erreurs")||"{}"), key=KP?CHAP.m+"/"+CHAP.id:"philosophie/nature-justice", t=String(q.q).slice(0,200); (E[key]=E[key]||{})[t]=(E[key][t]||0)+1; localStorage.setItem("rs:erreurs",JSON.stringify(E)); }catch(e){} }
   let pts=0,lab; if(k===q.a){pts=1;lab="Bonne réponse : +1"}else if(k===-1){lab="Passée : 0"}else{pts=-0.5;lab="Erreur : −0,5"}
   qState.score+=pts;
   const ex=card.querySelector(".expl"); const gif=k===-1?"":(k===q.a?["bravo1","bravo2"][Math.floor(Math.random()*2)]:"rate");
