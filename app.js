@@ -245,7 +245,8 @@
     return out.join("\n").trim();
   }
   function menuPhilo(tabs, onglet, m, cid) {
-    const bt = k => { const t = tabs.find(x => x[0] === k); return t ? `<button role="tab" id="tab-${k}" aria-selected="${k === onglet}" data-t="${k}">${t[1]}</button>` : ""; };
+    const nat = { qcm: "qcm", trous: "trous", flashcards: "flash" };
+    const bt = k => { const t = tabs.find(x => x[0] === k); if (t && m.id === "philosophie" && nat[k]) return `<a href="${lj(m, cid, nat[k])}">${t[1]}</a>`; return t ? `<button role="tab" id="tab-${k}" aria-selected="${k === onglet}" data-t="${k}">${t[1]}</button>` : ""; };
     const grp = (nom, ks, extra) => { const h = ks.map(bt).join("") + (extra || ""); return h ? `<div class="ngroup${ks.includes(onglet) ? " actif" : ""}"><button class="nbtn" aria-expanded="false">${nom} ▾</button><div class="nmenu">${h}</div></div>` : ""; };
     return `<nav class="menuchap" aria-label="Menu du chapitre"><a href="#${m.id}">Accueil</a>${grp("📖 Apprendre", ["cours", "flashcards", "bac"])}${grp("✏️ S'entraîner", ["exercices", "qcm", "trous"])}${grp("🎮 Jouer", [], ["jardin|🌼 Cartes mentales", "mots|🔤 Mots mêlés", "direct|👥 Jouer entre amis"].map(x => `<a href="${lj(m, cid, x.split("|")[0])}">${x.split("|")[1]}</a>`).join(""))}<a href="${lj(m, cid, "mes-notes")}">Mes notes</a></nav>`;
   }
