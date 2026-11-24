@@ -241,3 +241,17 @@ body[data-matiere=philosophie] .card,body[data-matiere=philosophie] .tile{backgr
 .tt select.ok{background:var(--ok-l);border-color:var(--ok)}.tt select.ko{background:var(--ko-l);border-color:var(--ko)}
 .corrige{color:var(--ok);font-weight:700;font-size:14px}
 .res{margin:10px 0 0}
+
+/* menu chapitre philo (style nature-justice) */
+.menuchap{display:flex;gap:4px;flex-wrap:wrap;align-items:center;background:linear-gradient(90deg,#1f4fb8,#1b3f9a);border-radius:16px;padding:8px 10px;margin:6px 0 10px;position:relative;z-index:5}
+.menuchap>a,.menuchap .nbtn{font:700 15px "Nunito";color:#fff;background:none;border:0;border-radius:99px;padding:8px 14px;cursor:pointer;text-decoration:none}
+.menuchap>a:first-child{background:#fff;color:#1b3f9a}
+.menuchap>a:hover,.menuchap .nbtn:hover{background:rgba(255,255,255,.2)}
+.menuchap>a:first-child:hover{background:#eef3ff}
+.menuchap .actif>.nbtn{background:rgba(255,255,255,.25)}
+.menuchap .ngroup{position:relative}
+.menuchap .nmenu{display:none;position:absolute;top:calc(100% + 6px);left:0;min-width:190px;background:#fff;border:2px solid #1f63d6;border-radius:14px;padding:6px;box-shadow:0 12px 30px rgba(18,48,107,.25);z-index:60;flex-direction:column;gap:2px}
+.menuchap .ngroup.open .nmenu{display:flex}
+.menuchap .nmenu button{font:700 15px "Nunito";text-align:left;color:#12306b;background:none;border:0;border-radius:10px;padding:9px 12px;cursor:pointer}
+.menuchap .nmenu button:hover{background:#e6f0ff}
+.menuchap .nmenu button[aria-selected=true]{background:#1f63d6;color:#fff}

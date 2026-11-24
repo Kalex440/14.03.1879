@@ -216,12 +216,13 @@
       <div style="--c:${esc(m.couleur)}">
       ${c.niveau ? `<span class="niv">${esc(c.niveau)}</span>` : ""}
       <h1 class="tmat">${esc(c.titre)}</h1><div class="rule"></div>
-      <div class="tabs" role="tablist" aria-label="Parties du chapitre">${tabs.map(t => `<button role="tab" id="tab-${t[0]}" aria-controls="panneau" aria-selected="${t[0] === onglet}" tabindex="${t[0] === onglet ? 0 : -1}" data-t="${t[0]}">${t[1]}</button>`).join("")}</div>
+      ${m.id === "philosophie" ? menuPhilo(tabs, onglet, m) : `<div class="tabs" role="tablist" aria-label="Parties du chapitre">${tabs.map(t => `<button role="tab" id="tab-${t[0]}" aria-controls="panneau" aria-selected="${t[0] === onglet}" tabindex="${t[0] === onglet ? 0 : -1}" data-t="${t[0]}">${t[1]}</button>`).join("")}</div>`}
       <div id="panneau" role="tabpanel" aria-labelledby="tab-${onglet}" tabindex="0"></div></div>`;
-    const tl = main.querySelector(".tabs");
-    tl.addEventListener("click", e => { const b = e.target.closest("button"); if (b) history.replaceState(null, "", `#${m.id}/${cid}/${b.dataset.t}`), pageChapitre(m, cid, b.dataset.t).then(() => main.querySelector(`#tab-${b.dataset.t}`).focus()); });
+    const tl = main.querySelector(".tabs, .menuchap");
+    tl.addEventListener("click", e => { const g = e.target.closest(".nbtn"); if (g) { const o = !g.parentNode.classList.contains("open"); tl.querySelectorAll(".ngroup").forEach(x => { x.classList.remove("open"); x.firstElementChild.setAttribute("aria-expanded", "false"); }); g.parentNode.classList.toggle("open", o); g.setAttribute("aria-expanded", o); return; }
+      const b = e.target.closest("button[data-t]"); if (b) history.replaceState(null, "", `#${m.id}/${cid}/${b.dataset.t}`), pageChapitre(m, cid, b.dataset.t).then(() => main.querySelector(`#tab-${b.dataset.t}`).focus()); });
     tl.addEventListener("keydown", e => {
-      const bs = [...tl.querySelectorAll("button")]; const i = bs.indexOf(document.activeElement); if (i < 0) return;
+      const bs = [...tl.querySelectorAll("button[data-t]")]; const i = bs.indexOf(document.activeElement); if (i < 0) return;
       let j = null; if (e.key === "ArrowRight") j = (i + 1) % bs.length; if (e.key === "ArrowLeft") j = (i - 1 + bs.length) % bs.length; if (e.key === "Home") j = 0; if (e.key === "End") j = bs.length - 1;
       if (j !== null) { e.preventDefault(); bs[j].click(); }
     });
@@ -232,6 +233,13 @@
     if (onglet === "qcm") qcm(p, m, c);
     if (onglet === "flashcards") cartes(p, m, c);
     if (onglet === "trous") trous(p, m, c);
+  }
+
+  /* ---------- menu des chapitres de philosophie (comme le site nature-justice) ---------- */
+  function menuPhilo(tabs, onglet, m) {
+    const bt = k => { const t = tabs.find(x => x[0] === k); return t ? `<button role="tab" id="tab-${k}" aria-selected="${k === onglet}" data-t="${k}">${t[1]}</button>` : ""; };
+    const grp = (nom, ks) => { const h = ks.map(bt).join(""); return h ? `<div class="ngroup${ks.includes(onglet) ? " actif" : ""}"><button class="nbtn" aria-expanded="false">${nom} ▾</button><div class="nmenu">${h}</div></div>` : ""; };
+    return `<nav class="menuchap" aria-label="Menu du chapitre"><a href="#${m.id}">Accueil</a>${grp("📖 Apprendre", ["cours"])}${grp("✏️ S'entraîner", ["exercices", "qcm", "trous"])}${grp("🎮 Jouer", ["flashcards"])}<a href="nature-justice/index.html#mes-notes">Mes notes</a></nav>`;
   }
 
   /* ---------- QCM ---------- */
