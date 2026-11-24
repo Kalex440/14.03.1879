@@ -63,18 +63,19 @@
   async function chapitre(mid, cid) {
     const k = mid + "/" + cid; if (cacheChap[k]) return cacheChap[k];
     const { infos, corps } = entete(await lire(`contenu/${mid}/${cid}.md`));
-    const parts = { cours: [], exercices: "", qcm: "", flashcards: "", trous: "" };
+    const parts = { cours: [], exercices: "", etudes: "", qcm: "", flashcards: "", trous: "" };
     corps.split(/^(?=## )/m).forEach(bloc => {
       const t = (bloc.match(/^## (.*)/) || [])[1];
       const n = (t || "").trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-      if (n === "exercices" || n === "exercice") parts.exercices += bloc.replace(/^## .*\n/, "");
+      if (n === "etudes de texte" || n === "etude de texte") parts.etudes += bloc.replace(/^## .*\n/, "");
+      else if (n === "exercices" || n === "exercice") parts.exercices += bloc.replace(/^## .*\n/, "");
       else if (n === "qcm" || n === "quiz") parts.qcm += bloc.replace(/^## .*\n/, "");
       else if (n === "textes a trous" || n === "texte a trous" || n === "trous") parts.trous += bloc.replace(/^## .*\n/, "");
       else if (n === "flashcards" || n === "flashcard" || n === "cartes") parts.flashcards += bloc.replace(/^## .*\n/, "");
       else if (n !== "cours") parts.cours.push(bloc); else parts.cours.push(bloc.replace(/^## .*\n/, ""));
     });
     const c = { id: cid, type: (infos.type || "").toLowerCase(), titre: infos.titre || cid, niveau: infos.niveau || "", resume: infos.resume || "",
-      cours: parts.cours.join("\n").trim(), exercices: lireExos(parts.exercices), qcm: lireQcm(parts.qcm), cartes: lireCartes(parts.flashcards), trous: lireTrous(parts.trous) };
+      cours: parts.cours.join("\n").trim(), exercices: lireExos(parts.exercices), etudes: lireExos(parts.etudes), qcm: lireQcm(parts.qcm), cartes: lireCartes(parts.flashcards), trous: lireTrous(parts.trous) };
     return (cacheChap[k] = c);
   }
   function lireQcm(t) {
@@ -210,7 +211,7 @@
         <article class="card cours presentation-chap">${md(c.cours)}</article></div>`;
       return;
     }
-    const tabs = [["cours", "📖 Cours", c.cours], ["exercices", "✏️ Exercices", c.exercices.length], ["qcm", "✅ QCM", c.qcm.length], ["trous", "✍️ Textes à trous", c.trous.length], ["flashcards", "🃏 Flashcards", c.cartes.length], ["bac", "🎓 Sujets de bac", bacTexte(c.cours)]].filter(t => t[2]);
+    const tabs = [["cours", "📖 Cours", c.cours], ["exercices", "✏️ Exercices", c.exercices.length], ["etudes", "📜 Études de texte", c.etudes.length], ["qcm", "✅ QCM", c.qcm.length], ["trous", "✍️ Textes à trous", c.trous.length], ["flashcards", "🃏 Flashcards", c.cartes.length], ["bac", "🎓 Sujets de bac", bacTexte(c.cours)]].filter(t => t[2]);
     if (!tabs.some(t => t[0] === onglet)) onglet = tabs.length ? tabs[0][0] : "cours";
     main.innerHTML = `${fil([["Accueil", "#"], [m.nom, "#" + m.id], [c.titre, ""]])}
       <div style="--c:${esc(m.couleur)}">
@@ -228,6 +229,8 @@
     });
     const p = main.querySelector("#panneau");
     if (onglet === "cours") p.innerHTML = `<article class="card cours">${md(c.cours || "*Le cours arrive bientôt.*")}</article>`;
+    if (onglet === "etudes") p.innerHTML = (m.id === "philosophie" && !qcmOk(m, cid)) ? `<div class="card"><h2>🔒 Étude de texte verrouillée</h2><p>Obtiens au moins <b>12/20</b> au <a href="${lj(m, cid, "qcm")}">QCM de ce chapitre</a> pour débloquer les études de texte.</p></div>` : c.etudes.map(x => `<section class="card"><h2>${md(x.titre, true)}</h2>${md(x.enonce)}
+      ${x.corr ? `<details><summary>Voir la correction</summary><div class="corr">${md(x.corr)}</div></details>` : ""}</section>`).join("");
     if (onglet === "exercices") p.innerHTML = c.exercices.map((x, i) => `<section class="card"><h2>${md(x.titre, true)}</h2>${md(x.enonce)}
       ${x.corr ? `<details><summary>Voir la correction</summary><div class="corr">${md(x.corr)}</div></details>` : ""}</section>`).join("");
     if (onglet === "qcm") qcm(p, m, c);
@@ -249,7 +252,7 @@
     const nat = { qcm: "qcm", trous: "trous", flashcards: "flash" };
     const bt = k => { const t = tabs.find(x => x[0] === k); if (t && m.id === "philosophie" && nat[k]) return `<a href="${lj(m, cid, nat[k])}">${k === "trous" && !qcmOk(m, cid) ? "🔒 " : ""}${t[1]}</a>`; return t ? `<button role="tab" id="tab-${k}" aria-selected="${k === onglet}" data-t="${k}">${t[1]}</button>` : ""; };
     const grp = (nom, ks, extra) => { const h = ks.map(bt).join("") + (extra || ""); return h ? `<div class="ngroup${ks.includes(onglet) ? " actif" : ""}"><button class="nbtn" aria-expanded="false">${nom} ▾</button><div class="nmenu">${h}</div></div>` : ""; };
-    return `<nav class="menuchap" aria-label="Menu du chapitre"><a href="#${m.id}">Accueil</a>${grp("📖 Apprendre", ["cours", "flashcards", "bac"])}${grp("✏️ S'entraîner", ["exercices", "qcm", "trous"])}${grp("🎮 Jouer", [], ["jardin|🌼 Cartes mentales", "mots|🔤 Mots mêlés", "direct|👥 Jouer entre amis"].map(x => `<a href="${lj(m, cid, x.split("|")[0])}">${x.split("|")[1]}</a>`).join(""))}<a href="${lj(m, cid, "mes-notes")}">Mes notes</a></nav>`;
+    return `<nav class="menuchap" aria-label="Menu du chapitre"><a href="#${m.id}">Accueil</a>${grp("📖 Apprendre", ["cours", "flashcards", "bac"])}${grp("✏️ S'entraîner", ["qcm", "etudes", "exercices", "trous"])}${grp("🎮 Jouer", [], ["jardin|🌼 Cartes mentales", "mots|🔤 Mots mêlés", "direct|👥 Jouer entre amis"].map(x => `<a href="${lj(m, cid, x.split("|")[0])}">${x.split("|")[1]}</a>`).join(""))}<a href="${lj(m, cid, "mes-notes")}">Mes notes</a></nav>`;
   }
 
   /* ---------- QCM ---------- */

@@ -30,6 +30,28 @@ Correction :
 2. **Non** : le hasard offre des occasions ; sans imprévu, la vie serait un mécanisme et la liberté inutile (Cournot, Sartre).
 3. **Dépassement** : la liberté n'est pas de supprimer le hasard mais de **choisir ce que j'en fais** (amor fati, Nietzsche ; consentement stoïcien).
 
+## Études de texte
+
+### Épictète — ce qui dépend de nous
+
+> « Parmi les choses, les unes dépendent de nous, les autres ne dépendent pas de nous. Dépendent de nous : le jugement, le désir, l'action. Ne dépendent pas de nous : le corps, les richesses, la réputation. »
+>
+> *Épictète, Manuel, § 1, traduction libre et abrégée.*
+
+**Questions**
+
+1. Quelle distinction Épictète établit-il ?
+2. Place le hasard, la fatalité et la liberté par rapport à cette distinction.
+3. Quelle attitude Épictète recommande-t-il face à ce qui ne dépend pas de nous ?
+4. Cette sagesse est-elle toujours praticable ?
+
+Correction :
+
+1. Entre ce qui **dépend** de nous (nos jugements, désirs, actions) et ce qui n'en dépend pas (corps, biens, réputation).
+2. Le hasard et la fatalité relèvent de ce qui ne dépend pas de nous ; la liberté, de ce que nous faisons de cela : notre jugement et notre action.
+3. Ne pas se troubler : consentir à ce qu'on ne peut pas changer et concentrer ses efforts sur ce qu'on peut.
+4. À discuter : utile pour supporter l'épreuve, mais la frontière n'est pas toujours nette (la santé, la réputation s'entretiennent en partie).
+
 ## Textes à trous
 
 ### Relier les quatre notions

@@ -42,6 +42,28 @@ Correction :
 1. **Réfutable** : une expérience pourrait montrer que l'eau bout à une autre température. Elle ne l'a jamais montré : l'énoncé est pour l'instant corroboré.
 2. **Non réfutable** : quoi qu'il arrive, on peut dire que c'était « le destin ». Aucune expérience ne peut le contredire, donc ce n'est pas un énoncé scientifique.
 
+## Études de texte
+
+### Popper — la réfutabilité
+
+> « Une théorie qui ne peut être réfutée par aucun événement concevable n'est pas scientifique. Le fait qu'une théorie explique tout n'est pas une qualité, c'est un défaut. »
+>
+> *Karl Popper, d'après Conjectures et réfutations (1963), texte résumé : à comparer à l'original.*
+
+**Questions**
+
+1. Quelle est la thèse de Popper ?
+2. Pourquoi une théorie qui « explique tout » est-elle suspecte ?
+3. Donne un exemple de théorie réfutable et d'énoncé non réfutable.
+4. La réfutabilité suffit-elle à rendre une théorie vraie ?
+
+Correction :
+
+1. Une théorie est scientifique si elle est **réfutable** : si une expérience pourrait la montrer fausse.
+2. Si aucun fait ne peut la contredire, elle ne dit rien de précis sur le monde : on ne peut jamais la tester.
+3. Réfutable : « l'eau bout à 100 °C à pression normale ». Non réfutable : « tout ce qui arrive était écrit ».
+4. Non : être réfutable est une condition pour être **scientifique**, pas une preuve de vérité. Une théorie non réfutée reste seulement **corroborée**, jusqu'à preuve du contraire.
+
 ## Textes à trous
 
 ### Opinion et science

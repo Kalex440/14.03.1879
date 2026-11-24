@@ -148,6 +148,28 @@ Correction :
 2. **Oui** : rencontre de séries indépendantes (Cournot) ; mutations aléatoires (Monod), un hasard réel.
 3. **Dépassement** : le hasard est réel dans le monde, mais **l'homme lui donne un sens** par ce qu'il en fait (liberté, probabilités).
 
+## Études de texte
+
+### Nietzsche — aimer son destin
+
+> « Je veux apprendre de plus en plus à voir comme beau ce qui est nécessaire dans les choses : ainsi je serai de ceux qui embellissent les choses. *Amor fati* : que ce soit dorénavant mon amour ! »
+>
+> *Nietzsche, Le Gai Savoir (1882), § 276, traduction libre.*
+
+**Questions**
+
+1. Que signifie l'expression latine *amor fati* ?
+2. Que doit-on « apprendre à voir comme beau » ?
+3. En quoi cette attitude diffère-t-elle de la résignation ?
+4. Rapproche cette idée du consentement au destin des stoïciens.
+
+Correction :
+
+1. « L'amour du destin » : accepter, et même aimer, ce qui arrive.
+2. Ce qui est **nécessaire** : ce qui ne peut pas être autrement, y compris les épreuves.
+3. La résignation **subit** à contrecœur ; l'*amor fati* **affirme** activement sa vie telle qu'elle est. Il s'agit de transformer ce qui arrive en quelque chose de beau.
+4. Les stoïciens consentent au destin parce que l'ordre du monde est rationnel ; Nietzsche, lui, aime le destin sans lui chercher une justification rationnelle.
+
 ## Textes à trous
 
 ### Les stoïciens et le destin

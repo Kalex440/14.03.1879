@@ -139,6 +139,28 @@ Correction :
 2. **Non** : la résignation est souvent une excuse (mauvaise foi, Sartre) ; l'argument paresseux est faux.
 3. **Dépassement** : ni résignation passive ni révolte vaine, mais **l'amor fati** (Nietzsche) : accepter ce qui est, pour agir à partir de là.
 
+## Études de texte
+
+### Spinoza — l'illusion de la liberté
+
+> « Les hommes se croient libres parce qu'ils ont conscience de leurs actions et de leurs désirs, mais ils ignorent les causes qui les déterminent. Une pierre lancée, si elle avait conscience, croirait se mouvoir librement et décider de sa course. »
+>
+> *Spinoza, lettre à Schuller (1674), texte abrégé et adapté : à comparer à l'original.*
+
+**Questions**
+
+1. Quelle est la thèse de Spinoza sur la liberté ?
+2. Que veut montrer l'exemple de la pierre ?
+3. Quelle est la différence entre « avoir conscience de ses désirs » et « connaître leurs causes » ?
+4. Cette thèse rend-elle toute responsabilité impossible ? Discute.
+
+Correction :
+
+1. La liberté ressentie est une **illusion** : nous agissons selon des causes que nous ignorons.
+2. La pierre est un cas **extrême** : si elle pensait, elle prendrait sa trajectoire, entièrement causée, pour un choix. De même, nous prenons nos actes pour des choix libres alors qu'ils sont déterminés.
+3. Avoir conscience de ses désirs, c'est les **sentir** ; connaître leurs causes, c'est les **expliquer**. Le premier ne suffit pas à être libre.
+4. À discuter : Spinoza ne supprime pas toute liberté, il en change le sens : être libre, c'est **comprendre** les causes qui nous déterminent pour agir selon la raison plutôt que subir ses passions.
+
 ## Textes à trous
 
 ### Descartes, Spinoza et Sartre
