@@ -443,7 +443,7 @@
   const AVATARS = ["🦊", "🐼", "🦁", "🐯", "🐸", "🐧", "🦉", "🐙", "🦄", "🐲", "🚀", "🪐", "⚛️", "🧪", "🎸", "⚽"];
   const avatar = () => store.get("avatar", ""), pseudo = () => store.get("pseudo", "");
   const MAIL_URL = (() => { const p = ["moc.liamg", "@", "31450073", "ijdnek"]; return "https://formsubmit.co/ajax/" + p.reverse().map(x => [...x].reverse().join("")).join(""); })();
-  function noterErreur(cle, question) { const e = store.get("erreurs", {}); const q = String(question).slice(0, 200); (e[cle] = e[cle] || {})[q] = (e[cle][q] || 0) + 1; store.set("erreurs", e); }
+  function noterErreur(cle, question) { const e = store.get("erreurs", {}); const q = String(question).replace(/\$/g, "").slice(0, 200); (e[cle] = e[cle] || {})[q] = (e[cle][q] || 0) + 1; store.set("erreurs", e); }
   const fmt1 = n => String(Math.round(n * 10) / 10).replace(".", ",");
   const NOMS_TYPE = { qcm: "QCM", etude: "Étude de texte", exo: "Exercices" };
   function majNavProfil() { const l = nav.querySelector("#navProfil"); let b = nav.querySelector("#navBilan"); if (prof() && !b && l) { l.insertAdjacentHTML("beforebegin", `<a href="#bilan" data-v="bilan" id="navBilan">📊 Bilan</a>`); } else if (!prof() && b) b.parentNode.removeChild(b); if (l) l.innerHTML = `<span aria-hidden="true">${esc(avatar() || "🙂")}</span> ${esc(pseudo() || "Mon profil")}`; }
@@ -533,7 +533,11 @@
       out.innerHTML = `<div class="card"><h2>${N} élève${N > 1 ? "s" : ""} analysé${N > 1 ? "s" : ""}</h2>
         <h3>Erreurs les plus fréquentes</h3><ol class="erreurs">${top.map(x => `<li><b>${x.el}/${N} élève${x.el > 1 ? "s" : ""}</b> (${x.n} erreur${x.n > 1 ? "s" : ""}) : ${esc(x.q)} <span class="note">(${esc(x.c)})</span></li>`).join("") || "<li>Aucune erreur enregistrée.</li>"}</ol>
         <h3>Moyenne par chapitre (du plus faible au plus fort)</h3><ul>${moyChap.map(x => `<li>${esc(x.c)} : <b>${fmt1(x.m)}/20</b> (${x.n} note${x.n > 1 ? "s" : ""})</li>`).join("")}</ul>
-        <h3>Élèves à accompagner en priorité</h3><ul>${bas.slice(0, 5).map(x => `<li>${esc(x.p)} : ${fmt1(x.m)}/20</li>`).join("")}</ul></div>`;
+        <h3>Élèves à accompagner en priorité</h3><ul>${bas.slice(0, 5).map(x => `<li>${esc(x.p)} : ${fmt1(x.m)}/20</li>`).join("")}</ul>
+        <h3>Détail par élève</h3>${L.map(d => { const mo = d.n.length ? d.n.reduce((s, x) => s + x[2], 0) / d.n.length : null; return `<div class="eleve"><b>${esc(d.a)} ${esc(d.p)}</b> — moyenne ${mo === null ? "—" : fmt1(mo) + "/20"}<ul>${d.e.slice(0, 5).map(e => `<li>${e[2]}× ${esc(e[1])} <span class="note">(${esc(e[0])})</span></li>`).join("") || "<li>Aucune erreur enregistrée.</li>"}</ul></div>`; }).join("")}</div>
+        <p class="noprint"><button class="btn" id="bPdf" type="button">📄 Télécharger le rapport en PDF</button> <span class="note">Dans la fenêtre qui s'ouvre, choisis « Enregistrer au format PDF » comme imprimante.</span></p>`;
+      out.insertAdjacentHTML("afterbegin", `<h1 class="onlyprint">Rapport de la classe — ${new Date().toLocaleDateString("fr-FR")}</h1>`);
+      out.querySelector("#bPdf").onclick = () => window.print();
     };
   }
 

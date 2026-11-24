@@ -265,3 +265,6 @@ body[data-matiere=philosophie] .card,body[data-matiere=philosophie] .tile{backgr
 table.notes{border-collapse:collapse;width:100%;font-size:15px}table.notes th,table.notes td{text-align:left;padding:6px 8px;border-bottom:1px solid #d9e2f5}
 .erreurs{padding-left:20px}.erreurs li{margin:6px 0}
 #navProfil{white-space:nowrap}
+
+.onlyprint{display:none}.eleve{margin:8px 0;break-inside:avoid}
+@media print{header,footer,#nav,.skip,.noprint,#bIn,#bGo,.card:has(#bIn),canvas{display:none!important}body{background:#fff!important;color:#000!important}.onlyprint{display:block}.card{box-shadow:none!important;border:0!important;background:#fff!important}main{max-width:none!important}}
