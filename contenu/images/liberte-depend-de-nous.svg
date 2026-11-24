@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" font-family="Arial,Helvetica,sans-serif"><rect width="640" height="300" rx="14" fill="#fffdf7"/>
+<text x="320" y="32" text-anchor="middle" font-size="20" font-weight="700" fill="#3b2470">Le partage d'Épictète</text>
+<rect x="24" y="52" width="280" height="226" rx="12" fill="#efe8fb" stroke="#6d3fc0" stroke-width="3"/>
+<text x="164" y="82" text-anchor="middle" font-size="17" font-weight="700" fill="#3b2470">Ce qui dépend de nous</text>
+<g font-size="16" fill="#2b1d55"><text x="48" y="120">• nos jugements</text><text x="48" y="150">• nos désirs et nos refus</text><text x="48" y="180">• nos choix, nos actes</text><text x="48" y="210">• notre manière de réagir</text></g>
+<text x="164" y="258" text-anchor="middle" font-size="15" font-weight="700" fill="#23793a">→ je suis libre ici</text>
+<rect x="336" y="52" width="280" height="226" rx="12" fill="#f1efe8" stroke="#7a6f5a" stroke-width="3"/>
+<text x="476" y="82" text-anchor="middle" font-size="17" font-weight="700" fill="#4a4233">Ce qui ne dépend pas de nous</text>
+<g font-size="16" fill="#3b352a"><text x="360" y="120">• notre corps, notre santé</text><text x="360" y="150">• la fortune, les biens</text><text x="360" y="180">• l'opinion des autres</text><text x="360" y="210">• la naissance, la mort</text></g>
+<text x="476" y="258" text-anchor="middle" font-size="15" font-weight="700" fill="#b83232">→ inutile de s'y attacher</text></svg>

@@ -232,3 +232,12 @@ body[data-matiere=philosophie] .card,body[data-matiere=philosophie] .tile{backgr
 .ajoutf .btn{align-self:flex-start;margin-top:8px}
 .etapes{padding-left:0;list-style:none}.etapes li{margin:12px 0}
 .presentation-chap .tile{border-left:6px solid var(--c)}
+
+/* Textes à trous */
+.banque{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.mot{background:#efe8fb;border:1.5px solid var(--c,#6d3fc0);border-radius:99px;padding:2px 12px;font-weight:700;font-size:15px;color:#2b1d55}
+.tt{line-height:2.2}
+.tt select{font:600 15px "Nunito";padding:3px 6px;border:2px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);max-width:170px}
+.tt select.ok{background:var(--ok-l);border-color:var(--ok)}.tt select.ko{background:var(--ko-l);border-color:var(--ko)}
+.corrige{color:var(--ok);font-weight:700;font-size:14px}
+.res{margin:10px 0 0}

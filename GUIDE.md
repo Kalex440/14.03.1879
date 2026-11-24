@@ -144,6 +144,15 @@ Laisse une ligne vide entre deux questions. Les réponses sont mélangées autom
 
 Le site garde le meilleur score de chaque élève, sur son propre téléphone.
 
+### ✍️ `## Textes à trous`
+
+Chaque texte commence par `### Titre`. Les mots à cacher sont écrits entre doubles crochets `[[mot]]` : le site fabrique la banque de mots et les menus déroulants tout seul.
+
+```
+### Hasard
+Pour [[Cournot]], le hasard est la rencontre de deux séries [[causales]].
+```
+
 ### 🃏 `## Flashcards`
 
 Une carte par ligne : le recto, deux deux-points `::`, puis le verso.

@@ -63,17 +63,18 @@
   async function chapitre(mid, cid) {
     const k = mid + "/" + cid; if (cacheChap[k]) return cacheChap[k];
     const { infos, corps } = entete(await lire(`contenu/${mid}/${cid}.md`));
-    const parts = { cours: [], exercices: "", qcm: "", flashcards: "" };
+    const parts = { cours: [], exercices: "", qcm: "", flashcards: "", trous: "" };
     corps.split(/^(?=## )/m).forEach(bloc => {
       const t = (bloc.match(/^## (.*)/) || [])[1];
       const n = (t || "").trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
       if (n === "exercices" || n === "exercice") parts.exercices += bloc.replace(/^## .*\n/, "");
       else if (n === "qcm" || n === "quiz") parts.qcm += bloc.replace(/^## .*\n/, "");
+      else if (n === "textes a trous" || n === "texte a trous" || n === "trous") parts.trous += bloc.replace(/^## .*\n/, "");
       else if (n === "flashcards" || n === "flashcard" || n === "cartes") parts.flashcards += bloc.replace(/^## .*\n/, "");
       else if (n !== "cours") parts.cours.push(bloc); else parts.cours.push(bloc.replace(/^## .*\n/, ""));
     });
     const c = { id: cid, type: (infos.type || "").toLowerCase(), titre: infos.titre || cid, niveau: infos.niveau || "", resume: infos.resume || "",
-      cours: parts.cours.join("\n").trim(), exercices: lireExos(parts.exercices), qcm: lireQcm(parts.qcm), cartes: lireCartes(parts.flashcards) };
+      cours: parts.cours.join("\n").trim(), exercices: lireExos(parts.exercices), qcm: lireQcm(parts.qcm), cartes: lireCartes(parts.flashcards), trous: lireTrous(parts.trous) };
     return (cacheChap[k] = c);
   }
   function lireQcm(t) {
@@ -87,6 +88,13 @@
       else q.q += " " + s;
     });
     return qs.filter(x => x.o.length > 1 && x.o.some(o => o.ok));
+  }
+  function lireTrous(t) {
+    return t.split(/^(?=### )/m).map(b => b.trim()).filter(b => b.startsWith("### ")).map(b => {
+      const titre = b.match(/^### (.*)/)[1]; const texte = b.replace(/^### .*\n?/, "").trim();
+      const mots = [...texte.matchAll(/\[\[(.+?)\]\]/g)].map(m => m[1].trim());
+      return { titre, texte, mots };
+    }).filter(x => x.mots.length);
   }
   function lireCartes(t) {
     return t.split("\n").map(l => l.trim()).filter(l => l.includes("::")).map(l => { const i = l.indexOf("::"); return { r: l.slice(0, i).replace(/^[-*]\s*/, "").trim(), v: l.slice(i + 2).trim() }; });
@@ -202,7 +210,7 @@
         <article class="card cours presentation-chap">${md(c.cours)}</article></div>`;
       return;
     }
-    const tabs = [["cours", "📖 Cours", c.cours], ["exercices", "✏️ Exercices", c.exercices.length], ["qcm", "✅ QCM", c.qcm.length], ["flashcards", "🃏 Flashcards", c.cartes.length]].filter(t => t[2]);
+    const tabs = [["cours", "📖 Cours", c.cours], ["exercices", "✏️ Exercices", c.exercices.length], ["qcm", "✅ QCM", c.qcm.length], ["trous", "✍️ Textes à trous", c.trous.length], ["flashcards", "🃏 Flashcards", c.cartes.length]].filter(t => t[2]);
     if (!tabs.some(t => t[0] === onglet)) onglet = tabs.length ? tabs[0][0] : "cours";
     main.innerHTML = `${fil([["Accueil", "#"], [m.nom, "#" + m.id], [c.titre, ""]])}
       <div style="--c:${esc(m.couleur)}">
@@ -223,6 +231,7 @@
       ${x.corr ? `<details><summary>Voir la correction</summary><div class="corr">${md(x.corr)}</div></details>` : ""}</section>`).join("");
     if (onglet === "qcm") qcm(p, m, c);
     if (onglet === "flashcards") cartes(p, m, c);
+    if (onglet === "trous") trous(p, m, c);
   }
 
   /* ---------- QCM ---------- */
@@ -252,6 +261,32 @@
       }
     }));
   }
+
+  /* ---------- Textes à trous ---------- */
+  function trous(p, m, c) {
+    p.innerHTML = `<p class="mut">Complète chaque texte avec les mots de la banque. Bonne réponse : <b>+1</b>, erreur : <b>−0,5</b>, case vide : 0.</p>` + c.trous.map((x, i) => {
+      const banque = shuffle(x.mots); let n = 0;
+      const html = md(x.texte.replace(/\[\[(.+?)\]\]/g, () => `@@T${n++}@@`));
+      let k = 0;
+      return `<section class="card trou" data-i="${i}"><h2>${md(x.titre, true)}</h2>
+        <p class="banque" aria-label="Banque de mots">${banque.map(w => `<span class="mot">${esc(w)}</span>`).join(" ")}</p>
+        <div class="tt">${html.replace(/@@T(\d+)@@/g, (mm, j) => `<select data-j="${j}" aria-label="Trou ${+j + 1}"><option value="">…</option>${banque.slice().sort().map(w => `<option>${esc(w)}</option>`).join("")}</select>`)}</div>
+        <button class="btn sm verif">Corriger</button> <button class="btn alt sm refaire">Recommencer</button><p class="res" aria-live="polite"></p></section>`;
+    }).join("");
+    p.querySelectorAll(".trou").forEach(sec => {
+      const x = c.trous[sec.dataset.i];
+      sec.querySelector(".verif").onclick = () => {
+        let pts = 0; const sels = [...sec.querySelectorAll("select")];
+        sels.forEach((sl, j) => { sl.classList.remove("ok", "ko"); if (!sl.value) return;
+          const bon = norm(sl.value) === norm(x.mots[j]); sl.classList.add(bon ? "ok" : "ko"); pts += bon ? 1 : -.5; if (!bon) sl.title = "Réponse : " + x.mots[j]; });
+        const note = Math.max(0, pts) / sels.length * 20;
+        sec.querySelector(".res").innerHTML = `<b>${Math.round(note * 10) / 10} / 20</b> — ${sels.filter(s => s.classList.contains("ok")).length} bonne(s) réponse(s) sur ${sels.length}. Les erreurs sont en rouge : survole-les pour voir la réponse.`;
+        sels.forEach((sl, j) => { if (sl.classList.contains("ko")) sl.insertAdjacentHTML("afterend", `<span class="corrige"> (${esc(x.mots[j])})</span>`); });
+      };
+      sec.querySelector(".refaire").onclick = () => trous(p, m, c);
+    });
+  }
+  const norm = t => String(t).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 
   /* ---------- Flashcards ---------- */
   function cartes(p, m, c) {

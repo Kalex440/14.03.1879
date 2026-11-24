@@ -39,6 +39,12 @@ La correction, cachée tant que l'élève ne clique pas.
 - une autre mauvaise réponse
 > L'explication affichée après la réponse.
 
+## Textes à trous
+
+### Titre du texte
+
+Une phrase avec un [[mot]] à retrouver.
+
 ## Flashcards
 
 Recto de la carte :: Verso de la carte
