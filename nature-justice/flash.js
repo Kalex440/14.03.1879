@@ -7,7 +7,7 @@ function renderFlash(){
   const nK = FLASH.filter((c, i) => known[i]).length;
   $("#fBody").innerHTML = `
   <div class="row" style="justify-content:space-between;margin-bottom:8px">
-    <div class="seg">${[["tous", "Toutes"], ["nature", "🌿 Nature"], ["justice", "⚖️ Justice"], ["revoir", "↺ À revoir"]].map(([k, l]) => `<button class="${F.filt === k ? "on" : ""}" data-f="${k}">${l}</button>`).join("")}</div>
+    <div class="seg">${(window.FLASH_FILT || [["tous", "Toutes"], ["nature", "🌿 Nature"], ["justice", "⚖️ Justice"], ["revoir", "↺ À revoir"]]).map(([k, l]) => `<button class="${F.filt === k ? "on" : ""}" data-f="${k}">${l}</button>`).join("")}</div>
     <div class="note">Je connais : <b>${nK}</b> / ${FLASH.length}</div>
   </div>
   <div class="bar" style="max-width:none;margin-bottom:12px"><i style="width:${nK / FLASH.length * 100}%"></i></div>

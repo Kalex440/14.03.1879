@@ -11,7 +11,8 @@ const $ = s => document.querySelector(s);
 const norm = s => (s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’`]/g,"'");
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt = n => (Math.round(n*10)/10).toString().replace(".",",");
-const store = { get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}, set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}} };
+const KP=(typeof CHAP!=="undefined"&&CHAP)?"c:"+CHAP.m+"/"+CHAP.id+":":"", kk=k=>(KP&&k!=="pseudo")?KP+k:k;
+const store = { get(k,d){try{const v=localStorage.getItem(kk(k));return v==null?d:JSON.parse(v)}catch(e){return d}}, set(k,v){try{localStorage.setItem(kk(k),JSON.stringify(v))}catch(e){}} };
 const SALT="philo-nature-justice-2026";
 function hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)}
 const LABELS={qcm:"QCM"}; ETUDES.forEach(e=>LABELS["etude-"+e.id]=e.titre.split(" — ")[0]+" — "+e.titre.split(" — ")[1]);
@@ -236,7 +237,7 @@ function drawBoard(){
 /* ========================= PARCOURS : QCM → ÉTUDES → TEXTES À TROUS ========================= */
 const PASS=12;
 const GATE_FROM=Date.UTC(2026,10,18,16,0,0); // 18/11/2026 à 20h00, heure de La Réunion (UTC+4)
-const gateOn=()=>Date.now()>=GATE_FROM;
+const gateOn=()=>!KP&&Date.now()>=GATE_FROM;
 const bestOf=k=>myLocal[k]?Math.max(myLocal[k].best??myLocal[k].s,myLocal[k].s):-1;
 const bestEtude=()=>Math.max(-1,...ETUDES.map(e=>bestOf("etude-"+e.id)));
 function isOpen(v){ if(!gateOn()) return true; if(v==="etudes") return bestOf("qcm")>=PASS; if(v==="trous") return bestEtude()>=PASS; return true; }

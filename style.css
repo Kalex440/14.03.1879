@@ -255,3 +255,4 @@ body[data-matiere=philosophie] .card,body[data-matiere=philosophie] .tile{backgr
 .menuchap .nmenu button{font:700 15px "Nunito";text-align:left;color:#12306b;background:none;border:0;border-radius:10px;padding:9px 12px;cursor:pointer}
 .menuchap .nmenu button:hover{background:#e6f0ff}
 .menuchap .nmenu button[aria-selected=true]{background:#1f63d6;color:#fff}
+.menuchap .nmenu a{font:700 15px "Nunito";color:#12306b;text-decoration:none;border-radius:10px;padding:9px 12px}.menuchap .nmenu a:hover{background:#e6f0ff}

@@ -37,10 +37,10 @@ function renderMots(){
   <div class="mmwrap">
     <div class="mm" id="mGrid" style="--n:${MM_SIZE}">${W.g.map((row, r) => row.map((ch, c) => `<div class="mc" tabindex="0" role="button" aria-label="Lettre ${ch}, ligne ${r + 1}, colonne ${c + 1}" data-r="${r}" data-c="${c}">${ch}</div>`).join("")).join("")}</div>
     <div class="mlist">${MOTS.map(w => `<div class="mw" data-m="${w.m}"><span class="mth ${w.th === "nature" ? "n" : w.th === "justice" ? "j" : "b"}"></span>${esc(w.w)}</div>`).join("")}
-      <div class="note" style="margin-top:6px"><span class="mth n"></span> nature · <span class="mth j"></span> justice · <span class="mth b"></span> les deux</div></div>
+      ${typeof CHAP !== "undefined" && CHAP ? "" : `<div class="note" style="margin-top:6px"><span class="mth n"></span> nature · <span class="mth j"></span> justice · <span class="mth b"></span> les deux</div>`}</div>
   </div>
   <p class="note">Fais glisser ton doigt (ou la souris) de la première à la dernière lettre d'un mot, ou touche la première lettre puis la dernière. Les mots peuvent être à l'horizontale, à la verticale, en diagonale, à l'endroit ou à l'envers.</p>
-  <h3>Les mots trouvés et leur lien avec la nature et la justice</h3>
+  <h3>${typeof CHAP !== "undefined" && CHAP ? "Les mots trouvés et leur explication" : "Les mots trouvés et leur lien avec la nature et la justice"}</h3>
   <div id="mExpl"><p class="note">Trouve un mot pour découvrir son explication.</p></div>`;
   $("#mNew").onclick = renderMots;
   clearInterval(mmTimer); mmTimer = setInterval(() => { const e = $("#mTime"); if (!e || !W){ return; } if (Object.keys(W.found).length < MOTS.length){ const s = Math.floor((Date.now() - W.t0) / 1000); e.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); } }, 1000);
@@ -83,7 +83,7 @@ function check(a, b){
   const n = Object.keys(W.found).length; $("#mCount").textContent = n + " / " + MOTS.length + " mots";
   const ex = $("#mExpl"); if (n === 1) ex.innerHTML = "";
   const d = document.createElement("div"); d.className = "mexp"; d.style.setProperty("--h", hue);
-  d.innerHTML = `<b>${esc(w.w)}</b> <span class="tag">${w.th === "nature" ? "🌿 nature" : w.th === "justice" ? "⚖️ justice" : "🌿⚖️ les deux"}</span><p>${esc(w.x)}</p>`;
+  d.innerHTML = `<b>${esc(w.w)}</b> <span class="tag">${typeof CHAP !== "undefined" && CHAP ? "📘 chapitre" : w.th === "nature" ? "🌿 nature" : w.th === "justice" ? "⚖️ justice" : "🌿⚖️ les deux"}</span><p>${esc(w.x)}</p>`;
   ex.prepend(d);
   if (n === MOTS.length){
     const s = Math.floor((Date.now() - W.t0) / 1000);

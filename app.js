@@ -216,7 +216,7 @@
       <div style="--c:${esc(m.couleur)}">
       ${c.niveau ? `<span class="niv">${esc(c.niveau)}</span>` : ""}
       <h1 class="tmat">${esc(c.titre)}</h1><div class="rule"></div>
-      ${menuPhilo(tabs, onglet, m)}
+      ${menuPhilo(tabs, onglet, m, cid)}
       <div id="panneau" role="tabpanel" aria-labelledby="tab-${onglet}" tabindex="0"></div></div>`;
     const tl = main.querySelector(".tabs, .menuchap");
     tl.addEventListener("click", e => { const g = e.target.closest(".nbtn"); if (g) { const o = !g.parentNode.classList.contains("open"); tl.querySelectorAll(".ngroup").forEach(x => { x.classList.remove("open"); x.firstElementChild.setAttribute("aria-expanded", "false"); }); g.parentNode.classList.toggle("open", o); g.setAttribute("aria-expanded", o); return; }
@@ -236,10 +236,11 @@
   }
 
   /* ---------- menu des chapitres de philosophie (comme le site nature-justice) ---------- */
-  function menuPhilo(tabs, onglet, m) {
+  const lj = (m, cid, v) => `nature-justice/index.html?m=${m.id}&chap=${cid}#${v}`;
+  function menuPhilo(tabs, onglet, m, cid) {
     const bt = k => { const t = tabs.find(x => x[0] === k); return t ? `<button role="tab" id="tab-${k}" aria-selected="${k === onglet}" data-t="${k}">${t[1]}</button>` : ""; };
-    const grp = (nom, ks) => { const h = ks.map(bt).join(""); return h ? `<div class="ngroup${ks.includes(onglet) ? " actif" : ""}"><button class="nbtn" aria-expanded="false">${nom} ▾</button><div class="nmenu">${h}</div></div>` : ""; };
-    return `<nav class="menuchap" aria-label="Menu du chapitre"><a href="#${m.id}">Accueil</a>${grp("📖 Apprendre", ["cours"])}${grp("✏️ S'entraîner", ["exercices", "qcm", "trous"])}${grp("🎮 Jouer", ["flashcards"])}<a href="${m.id === "philosophie" ? "nature-justice/index.html#mes-notes" : "#mentions"}">Mes notes</a></nav>`;
+    const grp = (nom, ks, extra) => { const h = ks.map(bt).join("") + (extra || ""); return h ? `<div class="ngroup${ks.includes(onglet) ? " actif" : ""}"><button class="nbtn" aria-expanded="false">${nom} ▾</button><div class="nmenu">${h}</div></div>` : ""; };
+    return `<nav class="menuchap" aria-label="Menu du chapitre"><a href="#${m.id}">Accueil</a>${grp("📖 Apprendre", ["cours"])}${grp("✏️ S'entraîner", ["exercices", "qcm", "trous"])}${grp("🎮 Jouer", ["flashcards"], ["jardin|🌼 Cartes mentales", "mots|🔤 Mots mêlés", "direct|👥 Jouer entre amis"].map(x => `<a href="${lj(m, cid, x.split("|")[0])}">${x.split("|")[1]}</a>`).join(""))}<a href="${lj(m, cid, "mes-notes")}">Mes notes</a></nav>`;
   }
 
   /* ---------- QCM ---------- */
