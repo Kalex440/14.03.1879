@@ -210,7 +210,7 @@
         <article class="card cours presentation-chap">${md(c.cours)}</article></div>`;
       return;
     }
-    const tabs = [["cours", "📖 Cours", c.cours], ["exercices", "✏️ Exercices", c.exercices.length], ["qcm", "✅ QCM", c.qcm.length], ["trous", "✍️ Textes à trous", c.trous.length], ["flashcards", "🃏 Flashcards", c.cartes.length]].filter(t => t[2]);
+    const tabs = [["cours", "📖 Cours", c.cours], ["exercices", "✏️ Exercices", c.exercices.length], ["qcm", "✅ QCM", c.qcm.length], ["trous", "✍️ Textes à trous", c.trous.length], ["flashcards", "🃏 Flashcards", c.cartes.length], ["bac", "🎓 Sujets de bac", bacTexte(c.cours)]].filter(t => t[2]);
     if (!tabs.some(t => t[0] === onglet)) onglet = tabs.length ? tabs[0][0] : "cours";
     main.innerHTML = `${fil([["Accueil", "#"], [m.nom, "#" + m.id], [c.titre, ""]])}
       <div style="--c:${esc(m.couleur)}">
@@ -232,15 +232,22 @@
       ${x.corr ? `<details><summary>Voir la correction</summary><div class="corr">${md(x.corr)}</div></details>` : ""}</section>`).join("");
     if (onglet === "qcm") qcm(p, m, c);
     if (onglet === "flashcards") cartes(p, m, c);
+    if (onglet === "bac") p.innerHTML = `<article class="card cours">${md(bacTexte(c.cours))}</article>`;
     if (onglet === "trous") trous(p, m, c);
   }
 
   /* ---------- menu des chapitres de philosophie (comme le site nature-justice) ---------- */
   const lj = (m, cid, v) => `nature-justice/index.html?m=${m.id}&chap=${cid}#${v}`;
+  /* sections « Pour la dissertation » / « Sujets types » du cours */
+  function bacTexte(cours) {
+    const out = []; let on = false;
+    (cours || "").split("\n").forEach(l => { const h = l.match(/^### (.+)/); if (h) on = /dissertation|sujets? type|sujets? de bac/i.test(h[1]); if (on) out.push(l); });
+    return out.join("\n").trim();
+  }
   function menuPhilo(tabs, onglet, m, cid) {
     const bt = k => { const t = tabs.find(x => x[0] === k); return t ? `<button role="tab" id="tab-${k}" aria-selected="${k === onglet}" data-t="${k}">${t[1]}</button>` : ""; };
     const grp = (nom, ks, extra) => { const h = ks.map(bt).join("") + (extra || ""); return h ? `<div class="ngroup${ks.includes(onglet) ? " actif" : ""}"><button class="nbtn" aria-expanded="false">${nom} ▾</button><div class="nmenu">${h}</div></div>` : ""; };
-    return `<nav class="menuchap" aria-label="Menu du chapitre"><a href="#${m.id}">Accueil</a>${grp("📖 Apprendre", ["cours"])}${grp("✏️ S'entraîner", ["exercices", "qcm", "trous"])}${grp("🎮 Jouer", ["flashcards"], ["jardin|🌼 Cartes mentales", "mots|🔤 Mots mêlés", "direct|👥 Jouer entre amis"].map(x => `<a href="${lj(m, cid, x.split("|")[0])}">${x.split("|")[1]}</a>`).join(""))}<a href="${lj(m, cid, "mes-notes")}">Mes notes</a></nav>`;
+    return `<nav class="menuchap" aria-label="Menu du chapitre"><a href="#${m.id}">Accueil</a>${grp("📖 Apprendre", ["cours", "flashcards", "bac"])}${grp("✏️ S'entraîner", ["exercices", "qcm", "trous"])}${grp("🎮 Jouer", [], ["jardin|🌼 Cartes mentales", "mots|🔤 Mots mêlés", "direct|👥 Jouer entre amis"].map(x => `<a href="${lj(m, cid, x.split("|")[0])}">${x.split("|")[1]}</a>`).join(""))}<a href="${lj(m, cid, "mes-notes")}">Mes notes</a></nav>`;
   }
 
   /* ---------- QCM ---------- */
