@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kalex440.github.io/revisions-sciences-/sitemap.xml
