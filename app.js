@@ -443,7 +443,9 @@
   const AVATARS = ["🦊", "🐼", "🦁", "🐯", "🐸", "🐧", "🦉", "🐙", "🦄", "🐲", "🚀", "🪐", "⚛️", "🧪", "🎸", "⚽"];
   const avatar = () => store.get("avatar", ""), pseudo = () => store.get("pseudo", "");
   const MAIL_URL = (() => { const p = ["moc.liamg", "@", "31450073", "ijdnek"]; return "https://formsubmit.co/ajax/" + p.reverse().map(x => [...x].reverse().join("")).join(""); })();
-  function noterErreur(cle, question) { const e = store.get("erreurs", {}); const q = String(question).replace(/\$/g, "").slice(0, 200); (e[cle] = e[cle] || {})[q] = (e[cle][q] || 0) + 1; store.set("erreurs", e); }
+  function noterErreur(cle, question) { const e = store.get("erreurs", {}); const q = lisible(question).slice(0, 200); (e[cle] = e[cle] || {})[q] = (e[cle][q] || 0) + 1; store.set("erreurs", e); }
+  /* formules LaTeX -> texte lisible (pour les listes d'erreurs, les e-mails et le PDF) */
+  const lisible = s => String(s).replace(/\$/g, "").replace(/\\d?frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)").replace(/\(([\wπ.]+)\)\/\(([\wπ.]+)\)/g, "$1/$2").replace(/\\sqrt\{([^{}]*)\}/g, "√($1)").replace(/\^2/g, "²").replace(/\^3/g, "³").replace(/\^\{([^{}]*)\}/g, "^$1").replace(/_\{([^{}]*)\}/g, "_$1").replace(/\\times/g, "×").replace(/\\cdot/g, "·").replace(/\\(?:leq?|leqslant)/g, "≤").replace(/\\(?:geq?|geqslant)/g, "≥").replace(/\\infty/g, "∞").replace(/\\pi/g, "π").replace(/\\Delta/g, "Δ").replace(/\\(?:left|right|mathrm|text)/g, "").replace(/\\,/g, " ").replace(/[{}]/g, "").replace(/\s+/g, " ").trim();
   const fmt1 = n => String(Math.round(n * 10) / 10).replace(".", ",");
   const NOMS_TYPE = { qcm: "QCM", etude: "Étude de texte", exo: "Exercices" };
   function majNavProfil() { const l = nav.querySelector("#navProfil"); let b = nav.querySelector("#navBilan"); if (prof() && !b && l) { l.insertAdjacentHTML("beforebegin", `<a href="#bilan" data-v="bilan" id="navBilan">📊 Bilan</a>`); } else if (!prof() && b) b.parentNode.removeChild(b); if (l) l.innerHTML = `<span aria-hidden="true">${esc(avatar() || "🙂")}</span> ${esc(pseudo() || "Mon profil")}`; }
@@ -489,7 +491,7 @@
     const box = main.querySelector("#pNotes"); box.innerHTML = `<div class="card"><p class="note">Chargement de tes notes…</p></div>`;
     const notes = await collecterNotes(), err = await listeErreurs(), envoye = store.get("envoi", 0);
     box.innerHTML = `<div class="card"><h2>Mes notes</h2>${notes.length ? `<table class="notes"><thead><tr><th>Chapitre</th><th>Épreuve</th><th>Meilleure note</th></tr></thead><tbody>${notes.map(n => `<tr><td>${esc(n.chap)}</td><td>${esc(n.type)}</td><td>${fmt1(n.note)}/20</td></tr>`).join("")}</tbody></table>` : `<p class="note">Pas encore de note : fais un QCM ou une étude de texte !</p>`}</div>
-      <div class="card"><h2>Mes erreurs les plus fréquentes</h2>${err.length ? `<ol class="erreurs">${err.slice(0, 10).map(x => `<li><b>${x.n}×</b> ${esc(x.q)} <span class="note">(${esc(x.chap)})</span></li>`).join("")}</ol><p class="note">Revois ces points dans le cours avant de refaire le QCM.</p>` : `<p class="note">Aucune erreur enregistrée pour l'instant.</p>`}</div>
+      <div class="card"><h2>Mes erreurs les plus fréquentes</h2>${err.length ? `<ol class="erreurs">${err.slice(0, 10).map(x => `<li><b>${x.n}×</b> ${esc(lisible(x.q))} <span class="note">(${esc(x.chap)})</span></li>`).join("")}</ol><p class="note">Revois ces points dans le cours avant de refaire le QCM.</p>` : `<p class="note">Aucune erreur enregistrée pour l'instant.</p>`}</div>
       <div class="card"><h2>Envoyer mes résultats à Kendji</h2>
         <p class="note">C'est <b>facultatif</b>. Si tu es d'accord, Kendji reçoit par e-mail (via le service FormSubmit) : ton pseudo, ton avatar, tes notes et la liste des questions que tu rates le plus. Il s'en sert pour t'aider à réviser, et les supprime à la fin de l'année scolaire ou plus tôt si tu le demandes. Voir les <a href="#mentions">mentions légales</a>.</p>
         <label class="rem"><input type="checkbox" id="pOui"> Je suis d'accord pour envoyer ces informations à Kendji.</label>
@@ -504,8 +506,8 @@
       const corps = { _subject: `📚 Résultats 14.03.1879 — ${nom}${moy === null ? "" : " : moyenne " + fmt1(moy) + "/20"}`, _template: "table", _captcha: "false",
         "Élève": nom, "Moyenne des épreuves": moy === null ? "—" : fmt1(moy) + "/20",
         "Notes": notes.map(n => `• ${n.chap} — ${n.type} : ${fmt1(n.note)}/20`).join("\n") || "—",
-        "Erreurs fréquentes": err.slice(0, 15).map(x => `• ${x.n}× ${x.q} (${x.chap})`).join("\n") || "—",
-        "DONNEES": "DONNEES:" + b64({ v: 1, p: pseudo(), a: avatar(), n: notes.map(n => [n.chap, n.type, Math.round(n.note * 10) / 10]), e: err.slice(0, 30).map(x => [x.chap, x.q, x.n]) }),
+        "Erreurs fréquentes": err.slice(0, 15).map(x => `• ${x.n}× ${lisible(x.q)} (${x.chap})`).join("\n") || "—",
+        "DONNEES": "DONNEES:" + b64({ v: 1, p: pseudo(), a: avatar(), n: notes.map(n => [n.chap, n.type, Math.round(n.note * 10) / 10]), e: err.slice(0, 30).map(x => [x.chap, lisible(x.q), x.n]) }),
         "Date": new Date().toLocaleString("fr-FR") };
       try {
         const r = await fetch(MAIL_URL, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(corps) });
@@ -531,10 +533,10 @@
       const moyChap = Object.keys(parChap).map(c => ({ c, m: parChap[c].reduce((s, x) => s + x, 0) / parChap[c].length, n: parChap[c].length })).sort((a, b) => a.m - b.m);
       const bas = L.map(d => ({ p: d.a + " " + d.p, m: d.n.length ? d.n.reduce((s, x) => s + x[2], 0) / d.n.length : null })).filter(x => x.m !== null).sort((a, b) => a.m - b.m);
       out.innerHTML = `<div class="card"><h2>${N} élève${N > 1 ? "s" : ""} analysé${N > 1 ? "s" : ""}</h2>
-        <h3>Erreurs les plus fréquentes</h3><ol class="erreurs">${top.map(x => `<li><b>${x.el}/${N} élève${x.el > 1 ? "s" : ""}</b> (${x.n} erreur${x.n > 1 ? "s" : ""}) : ${esc(x.q)} <span class="note">(${esc(x.c)})</span></li>`).join("") || "<li>Aucune erreur enregistrée.</li>"}</ol>
+        <h3>Erreurs les plus fréquentes</h3>${top.length ? `<table class="bilan"><thead><tr><th>Question ratée</th><th>Chapitre</th><th>Élèves concernés</th></tr></thead><tbody>${top.map(x => `<tr><td>${esc(lisible(x.q))}</td><td class="note">${esc(x.c)}</td><td><span class="barre"><i style="width:${Math.round(x.el / N * 100)}%"></i></span> <b>${x.el}/${N}</b> <span class="note">(${x.n}×)</span></td></tr>`).join("")}</tbody></table>` : "<p>Aucune erreur enregistrée.</p>"}
         <h3>Moyenne par chapitre (du plus faible au plus fort)</h3><ul>${moyChap.map(x => `<li>${esc(x.c)} : <b>${fmt1(x.m)}/20</b> (${x.n} note${x.n > 1 ? "s" : ""})</li>`).join("")}</ul>
         <h3>Élèves à accompagner en priorité</h3><ul>${bas.slice(0, 5).map(x => `<li>${esc(x.p)} : ${fmt1(x.m)}/20</li>`).join("")}</ul>
-        <h3>Détail par élève</h3>${L.map(d => { const mo = d.n.length ? d.n.reduce((s, x) => s + x[2], 0) / d.n.length : null; return `<div class="eleve"><b>${esc(d.a)} ${esc(d.p)}</b> — moyenne ${mo === null ? "—" : fmt1(mo) + "/20"}<ul>${d.e.slice(0, 5).map(e => `<li>${e[2]}× ${esc(e[1])} <span class="note">(${esc(e[0])})</span></li>`).join("") || "<li>Aucune erreur enregistrée.</li>"}</ul></div>`; }).join("")}</div>
+        <h3>Détail par élève</h3>${L.map(d => { const mo = d.n.length ? d.n.reduce((s, x) => s + x[2], 0) / d.n.length : null; return `<div class="eleve"><b>${esc(d.a)} ${esc(d.p)}</b> — moyenne ${mo === null ? "—" : fmt1(mo) + "/20"}<ul>${d.e.slice(0, 5).map(e => `<li>${e[2]}× ${esc(lisible(e[1]))} <span class="note">(${esc(e[0])})</span></li>`).join("") || "<li>Aucune erreur enregistrée.</li>"}</ul></div>`; }).join("")}</div>
         <p class="noprint"><button class="btn" id="bPdf" type="button">📄 Télécharger le rapport en PDF</button> <span class="note">Dans la fenêtre qui s'ouvre, choisis « Enregistrer au format PDF » comme imprimante.</span></p>`;
       out.insertAdjacentHTML("afterbegin", `<h1 class="onlyprint">Rapport de la classe — ${new Date().toLocaleDateString("fr-FR")}</h1>`);
       out.querySelector("#bPdf").onclick = () => window.print();

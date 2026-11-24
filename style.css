@@ -268,3 +268,9 @@ table.notes{border-collapse:collapse;width:100%;font-size:15px}table.notes th,ta
 
 .onlyprint{display:none}.eleve{margin:8px 0;break-inside:avoid}
 @media print{header,footer,#nav,.skip,.noprint,#bIn,#bGo,.card:has(#bIn),canvas{display:none!important}body{background:#fff!important;color:#000!important}.onlyprint{display:block}.card{box-shadow:none!important;border:0!important;background:#fff!important}main{max-width:none!important}}
+
+table.bilan{border-collapse:collapse;width:100%;font-size:15px}table.bilan th{text-align:left;padding:6px 8px;border-bottom:2px solid #1f63d6;color:#12306b}
+table.bilan td{padding:8px;border-bottom:1px solid #d9e2f5;vertical-align:top}
+.barre{display:inline-block;width:70px;height:9px;background:#e3eaf8;border-radius:9px;vertical-align:middle;overflow:hidden}.barre i{display:block;height:100%;background:#e2453c;border-radius:9px}
+@media print{.barre{border:1px solid #999}.barre i{background:#555!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+.bilan-rapport h3{margin:18px 0 6px}
