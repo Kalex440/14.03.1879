@@ -42,6 +42,16 @@ Correction :
 1. **Réfutable** : une expérience pourrait montrer que l'eau bout à une autre température. Elle ne l'a jamais montré : l'énoncé est pour l'instant corroboré.
 2. **Non réfutable** : quoi qu'il arrive, on peut dire que c'était « le destin ». Aucune expérience ne peut le contredire, donc ce n'est pas un énoncé scientifique.
 
+## Textes à trous
+
+### Opinion et science
+
+Pour [[Bachelard]], « l'opinion pense mal » : la science se construit [[contre]] l'opinion et doit dépasser des obstacles [[épistémologiques]]. Selon la méthode expérimentale de Claude Bernard, on part de l'observation, on formule une [[hypothèse]], puis on la teste par une [[expérience]].
+
+### Popper et Kuhn
+
+Pour [[Popper]], une théorie est scientifique si elle est [[réfutable]] : on peut imaginer une expérience qui la montrerait fausse. Pour [[Kuhn]], la science connaît des changements de [[paradigme]], comme le passage de Ptolémée à Copernic. Quant à [[Hume]], il montre que l'[[induction]] ne garantit pas que le futur ressemblera au passé.
+
 ## QCM
 
 ? Selon Popper, une théorie est scientifique si :

@@ -30,6 +30,16 @@ Correction :
 2. **Non** : le hasard offre des occasions ; sans imprévu, la vie serait un mécanisme et la liberté inutile (Cournot, Sartre).
 3. **Dépassement** : la liberté n'est pas de supprimer le hasard mais de **choisir ce que j'en fais** (amor fati, Nietzsche ; consentement stoïcien).
 
+## Textes à trous
+
+### Relier les quatre notions
+
+Le [[hasard]] désigne des événements non prévus, selon Cournot. La [[fatalité]] est ce qui semble inévitable, alors que le [[déterminisme]] affirme que tout a des causes. Le [[destin]] est la direction que prend une vie, subie, acceptée ou construite. La [[liberté]] est ce que je fais de tout cela : choisir, assumer, se donner sa [[loi]].
+
+### Ce qui dépend de nous
+
+Pour [[Épictète]], il faut distinguer ce qui dépend de nous (nos jugements, nos désirs) et ce qui n'en [[dépend]] pas. Pour Nietzsche, l'[[amor fati]] consiste à aimer son destin au lieu de le subir. Pour Sartre, l'homme est condamné à être [[libre]].
+
 ## QCM
 
 ? Qui distingue ce qui dépend de nous de ce qui n'en dépend pas ?
