@@ -1,7 +1,5 @@
-liberte
-fatalite
-destin
-hasard
+liberte-fatalite
+destin-hasard
 bilan-themes
 nature-justice
 la-science
