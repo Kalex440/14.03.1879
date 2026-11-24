@@ -229,8 +229,9 @@
     });
     const p = main.querySelector("#panneau");
     if (onglet === "cours") p.innerHTML = `<article class="card cours">${md(c.cours || "*Le cours arrive bientôt.*")}</article>`;
-    if (onglet === "etudes") etudes(p, m, c, cid);
-    if (onglet === "exercices") p.innerHTML = c.exercices.map((x, i) => `<section class="card"><h2>${md(x.titre, true)}</h2>${md(x.enonce)}
+    if (onglet === "etudes") noter(p, m, c, cid, "etude");
+    if (onglet === "exercices" && m.id === "philosophie") noter(p, m, c, cid, "exo");
+    else if (onglet === "exercices") p.innerHTML = c.exercices.map((x, i) => `<section class="card"><h2>${md(x.titre, true)}</h2>${md(x.enonce)}
       ${x.corr ? `<details><summary>Voir la correction</summary><div class="corr">${md(x.corr)}</div></details>` : ""}</section>`).join("");
     if (onglet === "qcm") qcm(p, m, c);
     if (onglet === "flashcards") cartes(p, m, c);
@@ -245,27 +246,37 @@
   const etudeOk = (m, cid) => best(m, cid, "etude") >= 12;
   const lj = (m, cid, v) => `nature-justice/index.html?m=${m.id}&chap=${cid}#${v}`;
   /* ---------- Études de texte notées (auto-évaluation), débloquées à 12/20 au QCM ---------- */
-  function etudes(p, m, c, cid) {
-    if (m.id === "philosophie" && !qcmOk(m, cid)) { p.innerHTML = `<div class="card"><h2>🔒 Études de texte verrouillées</h2><p>Obtiens au moins <b>12/20</b> au <a href="${lj(m, cid, "qcm")}">QCM de ce chapitre</a> pour les débloquer.</p></div>`; return; }
-    const meilleur = best(m, cid, "etude");
-    p.innerHTML = `<p class="note">Rédige tes réponses, affiche la correction, puis note-toi honnêtement : <b>1</b> point si c'est juste, <b>0,5</b> si c'est partiel, <b>0</b> sinon. Il faut au moins <b>12/20</b> à une étude de texte pour débloquer les textes à trous.${meilleur >= 0 ? ` Ta meilleure note : <b>${String(Math.round(meilleur * 10) / 10).replace(".", ",")}/20</b>.` : ""}</p>` + c.etudes.map((x, i) => {
-      const nq = Math.max(1, (x.enonce.match(/^\s*\d+\./gm) || []).length);
+  const ETAPES = { etude: { liste: "etudes", nom: "études de texte", prec: null }, exo: { liste: "exercices", nom: "exercices", prec: "etude" } };
+  /* clé de l'étape qui doit être réussie (>= 12) avant d'ouvrir une partie : qcm -> étude -> exercices -> trous */
+  function precedent(m, c, cid, k) {
+    const chaine = ["qcm", c.etudes.length && "etude", c.exercices.length && "exo"].filter(Boolean);
+    if (k === "trous") return chaine[chaine.length - 1];
+    const i = chaine.indexOf(k); return i > 0 ? chaine[i - 1] : null;
+  }
+  const NOMS = { qcm: "QCM", etude: "étude de texte", exo: "exercice" };
+  const ouvert = (m, c, cid, k) => { if (m.id !== "philosophie") return true; const pr = precedent(m, c, cid, k); return !pr || best(m, cid, pr) >= 12; };
+  function noter(p, m, c, cid, k) {
+    const E = ETAPES[k], items = c[E.liste], pr = precedent(m, c, cid, k === "etude" ? "etude" : "exo");
+    if (!ouvert(m, c, cid, k)) { p.innerHTML = `<div class="card"><h2>🔒 ${E.nom[0].toUpperCase() + E.nom.slice(1)} verrouillés</h2><p>Obtiens au moins <b>12/20</b> ${pr === "qcm" ? `au <a href="${lj(m, cid, "qcm")}">QCM de ce chapitre</a>` : `à ${pr === "etude" ? "une étude de texte" : "un exercice"} de ce chapitre`} pour les débloquer.</p></div>`; return; }
+    const meilleur = best(m, cid, k), apres = k === "etude" ? (c.exercices.length ? "les exercices" : "les textes à trous") : "les textes à trous";
+    p.innerHTML = `<p class="note">Cherche d'abord, affiche la correction, puis note-toi honnêtement : <b>1</b> point si c'est juste, <b>0,5</b> si c'est partiel, <b>0</b> sinon. Il faut au moins <b>12/20</b> pour débloquer ${apres}.${meilleur >= 0 ? ` Ta meilleure note : <b>${String(Math.round(meilleur * 10) / 10).replace(".", ",")}/20</b>.` : ""}</p>` + items.map((x, i) => {
+      const nq = k === "etude" ? Math.max(1, (x.enonce.match(/^\s*\d+\./gm) || []).length) : 1;
       return `<section class="card etude" data-i="${i}" data-nq="${nq}"><h2>${md(x.titre, true)}</h2>${md(x.enonce)}
         <label class="note" for="rep${i}">Tes réponses</label><textarea id="rep${i}" rows="5" style="width:100%"></textarea>
         <button class="btn sm voir" type="button">Voir la correction</button>
         <div class="apresc" hidden><div class="corr">${md(x.corr)}</div>
-          <p><b>Ma note, question par question :</b></p>
-          ${Array.from({ length: nq }, (_, q) => `<label>Q${q + 1} <select class="nq"><option value="0">0 – faux</option><option value="0.5">0,5 – partiel</option><option value="1">1 – juste</option></select></label> `).join("")}
+          <p><b>Ma note${nq > 1 ? ", question par question" : ""} :</b></p>
+          ${Array.from({ length: nq }, (_, q) => `<label>${nq > 1 ? "Q" + (q + 1) : "Réponse"} <select class="nq"><option value="0">0 – faux</option><option value="0.5">0,5 – partiel</option><option value="1">1 – juste</option></select></label> `).join("")}
           <button class="btn sm valider" type="button">Valider ma note</button> <span class="resultat note" aria-live="polite"></span></div></section>`; }).join("");
     p.querySelectorAll(".etude").forEach(s => {
       s.querySelector(".voir").onclick = () => { s.querySelector(".apresc").hidden = false; s.querySelector(".voir").hidden = true; };
       s.querySelector(".valider").onclick = () => {
         const nq = +s.dataset.nq, tot = [...s.querySelectorAll(".nq")].reduce((t, e) => t + +e.value, 0), note = Math.round(tot / nq * 200) / 10;
         let r = {}; try { r = JSON.parse(localStorage.getItem(resKey(m, cid)) || "{}"); } catch (e) {}
-        const old = r.etude ? Math.max(r.etude.best ?? r.etude.s, r.etude.s) : -1;
-        r.etude = { s: note, best: Math.max(old, note), n: 1 };
+        const old = r[k] ? Math.max(r[k].best ?? r[k].s, r[k].s) : -1;
+        r[k] = { s: note, best: Math.max(old, note), n: 1 };
         try { localStorage.setItem(resKey(m, cid), JSON.stringify(r)); } catch (e) {}
-        s.querySelector(".resultat").textContent = `${String(note).replace(".", ",")}/20 ` + (note >= 12 ? "🔓 Bravo, les textes à trous sont débloqués !" : "🔒 Il faut 12/20 pour débloquer les textes à trous : relis la correction et réessaie.");
+        s.querySelector(".resultat").textContent = `${String(note).replace(".", ",")}/20 ` + (note >= 12 ? `🔓 Bravo, ${apres} sont débloqués !` : `🔒 Il faut 12/20 pour débloquer ${apres} : relis la correction et réessaie.`);
       };
     });
   }
@@ -277,8 +288,11 @@
     return out.join("\n").trim();
   }
   function menuPhilo(tabs, onglet, m, cid, c0) {
+    const verrou = k => (m.id === "philosophie" && !ouvert(m, c0, cid, k)) ? "🔒 " : "";
     const nat = { qcm: "qcm", trous: "trous", flashcards: "flash", etudes: null };
-    const bt = k => { const t = tabs.find(x => x[0] === k); if (t && m.id === "philosophie" && nat[k]) return `<a href="${lj(m, cid, nat[k])}">${(k === "trous" && !(c0.etudes.length ? etudeOk(m, cid) : qcmOk(m, cid))) || (k === "etudes" && !qcmOk(m, cid)) ? "🔒 " : ""}${t[1]}</a>`; return t ? `<button role="tab" id="tab-${k}" aria-selected="${k === onglet}" data-t="${k}">${k === "etudes" && m.id === "philosophie" && !qcmOk(m, cid) ? "🔒 " : ""}${t[1]}</button>` : ""; };
+    const bt = k => { const t = tabs.find(x => x[0] === k); if (!t) return ""; const kk = { trous: "trous", etudes: "etude", exercices: "exo" }[k];
+      if (m.id === "philosophie" && nat[k]) return `<a href="${lj(m, cid, nat[k])}">${kk ? verrou(kk) : ""}${t[1]}</a>`;
+      return `<button role="tab" id="tab-${k}" aria-selected="${k === onglet}" data-t="${k}">${kk ? verrou(kk) : ""}${t[1]}</button>`; };
     const grp = (nom, ks, extra) => { const h = ks.map(bt).join("") + (extra || ""); return h ? `<div class="ngroup${ks.includes(onglet) ? " actif" : ""}"><button class="nbtn" aria-expanded="false">${nom} ▾</button><div class="nmenu">${h}</div></div>` : ""; };
     return `<nav class="menuchap" aria-label="Menu du chapitre"><a href="#${m.id}">Accueil</a>${grp("📖 Apprendre", ["cours", "flashcards", "bac"])}${grp("✏️ S'entraîner", ["qcm", "etudes", "exercices", "trous"])}${grp("🎮 Jouer", [], ["jardin|🌼 Cartes mentales", "mots|🔤 Mots mêlés", "direct|👥 Jouer entre amis"].map(x => `<a href="${lj(m, cid, x.split("|")[0])}">${x.split("|")[1]}</a>`).join(""))}<a href="${lj(m, cid, "mes-notes")}">Mes notes</a></nav>`;
   }

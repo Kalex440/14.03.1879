@@ -240,7 +240,7 @@ const GATE_FROM=Date.UTC(2026,10,18,16,0,0); // 18/11/2026 à 20h00, heure de La
 const gateOn=()=>!!KP||Date.now()>=GATE_FROM;
 const bestOf=k=>myLocal[k]?Math.max(myLocal[k].best??myLocal[k].s,myLocal[k].s):-1;
 const bestEtude=()=>Math.max(-1,...ETUDES.map(e=>bestOf("etude-"+e.id)));
-function isOpen(v){ if(!gateOn()) return true; if(v==="etudes") return bestOf("qcm")>=PASS; if(v==="trous") return KP?bestOf(CHAP.etudes?"etude":"qcm")>=PASS:bestEtude()>=PASS; return true; }
+function isOpen(v){ if(!gateOn()) return true; if(v==="etudes") return bestOf("qcm")>=PASS; if(v==="trous") return KP?bestOf(CHAP.exos?"exo":CHAP.etudes?"etude":"qcm")>=PASS:bestEtude()>=PASS; return true; }
 function gateMsg(kind,note){
   if(!gateOn()) return "";
   if(KP&&kind==="qcm"&&CHAP.etudes) return note>=PASS
@@ -267,7 +267,7 @@ function gate(v){
   let g=sec.querySelector(".gatebox"); if(!g){ g=document.createElement("div"); g.className="gatebox"; sec.querySelector(".rule").after(g); }
   const open=isOpen(v); sec.classList.toggle("gated",!open);
   if(!open){
-    const prev=(KP&&v==="trous"&&CHAP.etudes)?{n:"à une étude de texte",h:"../index.html#"+CHAP.m+"/"+CHAP.id+"/etudes",b:bestOf("etude")}:(KP&&v==="trous")?{n:"au QCM",h:"#qcm",b:bestOf("qcm")}:v==="etudes"?{n:"au QCM",h:"#qcm",b:bestOf("qcm")}:{n:"à une étude de texte",h:"#etudes",b:bestEtude()};
+    const prev=(KP&&v==="trous"&&CHAP.exos)?{n:"à un exercice",h:"../index.html#"+CHAP.m+"/"+CHAP.id+"/exercices",b:bestOf("exo")}:(KP&&v==="trous"&&CHAP.etudes)?{n:"à une étude de texte",h:"../index.html#"+CHAP.m+"/"+CHAP.id+"/etudes",b:bestOf("etude")}:(KP&&v==="trous")?{n:"au QCM",h:"#qcm",b:bestOf("qcm")}:v==="etudes"?{n:"au QCM",h:"#qcm",b:bestOf("qcm")}:{n:"à une étude de texte",h:"#etudes",b:bestEtude()};
     g.innerHTML=`<div class="lockcard"><div class="bigemoji">🔒</div><h2>Niveau verrouillé</h2><p>Pour accéder à cette partie, obtiens au moins <b>${PASS}/20</b> ${prev.n}.</p>
       ${KP?`<div class="steps"><span class="${bestOf("qcm")>=PASS?"done":"cur"}">1. QCM</span><span class="${bestOf("qcm")>=PASS?"cur":""}">2. Textes à trous</span></div>`:`<div class="steps"><span class="${bestOf("qcm")>=PASS?"done":"cur"}">1. QCM</span><span class="${bestOf("qcm")<PASS?"":bestEtude()>=PASS?"done":"cur"}">2. Études de texte</span><span class="${bestEtude()>=PASS?"cur":""}">3. Textes à trous</span></div>`}
       <p class="note">Ta meilleure note : <b>${prev.b<0?"aucune pour l'instant":fmt(prev.b)+"/20"}</b></p><a class="btn green" href="${prev.h}">${v==="etudes"?"Faire le QCM":"Faire une étude de texte"} ▶</a></div>`;
