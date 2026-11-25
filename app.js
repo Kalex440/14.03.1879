@@ -441,14 +441,14 @@
 
   /* ---------- Profil : avatar, notes, erreurs fréquentes, envoi VOLONTAIRE à Kendji ---------- */
   const AVATARS = ["🦊", "🐼", "🦁", "🐯", "🐸", "🐧", "🦉", "🐙", "🦄", "🐲", "🚀", "🪐", "⚛️", "🧪", "🎸", "⚽"];
-  const avatar = () => store.get("avatar", ""), pseudo = () => store.get("pseudo", "");
+  const avatar = () => store.get("avatar", ""), avatarOk = () => Avatar.valide(avatar()), avTxt = () => "🧑‍🎓", pseudo = () => store.get("pseudo", "");
   const MAIL_URL = (() => { const p = ["moc.liamg", "@", "31450073", "ijdnek"]; return "https://formsubmit.co/ajax/" + p.reverse().map(x => [...x].reverse().join("")).join(""); })();
   function noterErreur(cle, question) { const e = store.get("erreurs", {}); const q = lisible(question).slice(0, 200); (e[cle] = e[cle] || {})[q] = (e[cle][q] || 0) + 1; store.set("erreurs", e); }
   /* formules LaTeX -> texte lisible (pour les listes d'erreurs, les e-mails et le PDF) */
   const lisible = s => String(s).replace(/\$/g, "").replace(/\\d?frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)").replace(/\(([\wπ.]+)\)\/\(([\wπ.]+)\)/g, "$1/$2").replace(/\\sqrt\{([^{}]*)\}/g, "√($1)").replace(/\^2/g, "²").replace(/\^3/g, "³").replace(/\^\{([^{}]*)\}/g, "^$1").replace(/_\{([^{}]*)\}/g, "_$1").replace(/\\times/g, "×").replace(/\\cdot/g, "·").replace(/\\(?:leq?|leqslant)/g, "≤").replace(/\\(?:geq?|geqslant)/g, "≥").replace(/\\infty/g, "∞").replace(/\\pi/g, "π").replace(/\\Delta/g, "Δ").replace(/\\(?:left|right|mathrm|text)/g, "").replace(/\\,/g, " ").replace(/[{}]/g, "").replace(/\s+/g, " ").trim();
   const fmt1 = n => String(Math.round(n * 10) / 10).replace(".", ",");
   const NOMS_TYPE = { qcm: "QCM", etude: "Étude de texte", exo: "Exercices" };
-  function majNavProfil() { const l = nav.querySelector("#navProfil"); let b = nav.querySelector("#navBilan"); if (prof() && !b && l) { l.insertAdjacentHTML("beforebegin", `<a href="#bilan" data-v="bilan" id="navBilan">📊 Bilan</a>`); } else if (!prof() && b) b.parentNode.removeChild(b); if (l) l.innerHTML = `<span aria-hidden="true">${esc(avatar() || "🙂")}</span> ${esc(pseudo() || "Mon profil")}`; }
+  function majNavProfil() { const l = nav.querySelector("#navProfil"); let b = nav.querySelector("#navBilan"); if (prof() && !b && l) { l.insertAdjacentHTML("beforebegin", `<a href="#bilan" data-v="bilan" id="navBilan">📊 Bilan</a>`); } else if (!prof() && b) b.parentNode.removeChild(b); if (l) l.innerHTML = `<span class="navav" aria-hidden="true">${avatarOk() ? Avatar.svg(avatar(), 24, "") : "🙂"}</span> ${esc(pseudo() || "Mon profil")}`; }
   async function titreChap(cle) { const [mid, cid] = cle.split("/"); const m = MATIERES.find(x => x.id === mid); if (!m) return cle === "philosophie/nature-justice" ? "Philosophie · La nature et la justice" : cle; try { return m.nom + " · " + (await chapitre(mid, cid)).titre; } catch (e) { return cle; } }
   async function collecterNotes() {
     const out = [];
@@ -472,18 +472,27 @@
   const b64 = o => btoa(unescape(encodeURIComponent(JSON.stringify(o))));
   async function pageProfil() {
     document.title = "Mon profil · " + (SITE ? SITE.titre : "Révisions");
-    const premiere = !avatar();
-    main.innerHTML = `<div class="card profil"><h1>${premiere ? "Choisis ton avatar" : "Mon profil"}</h1>
-      <p class="mut">Ton avatar et ton pseudo restent <b>sur ton appareil</b>. Utilise un pseudo plutôt que ton nom complet.</p>
-      <div class="avatars" role="radiogroup" aria-label="Avatar">${AVATARS.map(x => `<button type="button" class="av${x === avatar() ? " on" : ""}" role="radio" aria-checked="${x === avatar()}" aria-label="Avatar ${x}" data-a="${x}">${x}</button>`).join("")}</div>
+    const premiere = !avatarOk();
+    let cfg = avatarOk() ? { ...avatar() } : Avatar.defaut();
+    const A = Avatar, sw = (cle, liste, nom) => `<fieldset class="optav"><legend>${nom}</legend><div class="rang">${liste.map((c, i) => `<button type="button" class="sw" data-k="${cle}" data-v="${i}" style="--sw:${c}" aria-label="${nom} ${i + 1}" aria-pressed="false"></button>`).join("")}</div></fieldset>`;
+    const fm = (cle, liste, nom) => `<fieldset class="optav"><legend>${nom}</legend><div class="rang">${liste.map(v => `<button type="button" class="fm" data-k="${cle}" data-v="${v}" aria-pressed="false">${A.NOMS[v]}</button>`).join("")}</div></fieldset>`;
+    main.innerHTML = `<div class="card profil"><h1>${premiere ? "Crée ton personnage" : "Mon profil"}</h1>
+      <p class="mut">Ton personnage et ton pseudo restent <b>sur ton appareil</b>. Utilise un pseudo plutôt que ton nom complet.</p>
+      <div class="creator"><div class="apercu" id="apercu" role="img" aria-live="polite"></div>
+        <div class="opts">${sw("peau", A.PEAUX, "Peau")}${fm("coiffure", A.COIFFURES, "Coiffure")}${sw("cheveux", A.CHEVEUX, "Couleur des cheveux")}${fm("yeux", A.YEUX, "Yeux")}${fm("bouche", A.BOUCHES, "Bouche")}${sw("haut", A.HAUTS, "Couleur du haut")}${sw("fond", A.FONDS, "Fond")}
+        <button type="button" class="btn alt sm" id="hasard">🎲 Au hasard</button></div></div>
       <label for="pPseudo">Prénom ou pseudo</label><input id="pPseudo" maxlength="30" value="${esc(pseudo())}" placeholder="Ex. : Léa T2">
       <button class="btn" id="pOk" type="button">${premiere ? "C'est parti !" : "Enregistrer"}</button> <span class="note" id="pMsg" aria-live="polite"></span></div>
       <div id="pNotes"></div>`;
-    let choix = avatar();
-    main.querySelectorAll(".av").forEach(b => b.onclick = () => { choix = b.dataset.a; main.querySelectorAll(".av").forEach(x => { x.classList.toggle("on", x === b); x.setAttribute("aria-checked", x === b); }); });
+    const maj = () => {
+      main.querySelector("#apercu").innerHTML = A.svg(cfg, 168, "Aperçu de ton personnage");
+      main.querySelectorAll(".sw,.fm").forEach(b => b.setAttribute("aria-pressed", String(cfg[b.dataset.k]) === b.dataset.v));
+    };
+    main.querySelector(".creator").addEventListener("click", e => { const b = e.target.closest(".sw,.fm"); if (!b) return; cfg[b.dataset.k] = (b.classList.contains("sw") ? +b.dataset.v : b.dataset.v); maj(); });
+    main.querySelector("#hasard").onclick = () => { cfg = A.aleatoire(); maj(); };
+    maj();
     main.querySelector("#pOk").onclick = () => {
-      if (!choix) { main.querySelector("#pMsg").textContent = "Choisis d'abord un avatar."; return; }
-      store.set("avatar", choix); store.set("pseudo", main.querySelector("#pPseudo").value.trim()); majNavProfil();
+      store.set("avatar", cfg); store.set("pseudo", main.querySelector("#pPseudo").value.trim()); majNavProfil();
       if (premiere) { location.hash = ""; return; }
       main.querySelector("#pMsg").textContent = "Enregistré ✔";
     };
@@ -502,12 +511,12 @@
       if (!oui.checked) return;
       if (!pseudo()) { msg.textContent = "Ajoute d'abord un prénom ou un pseudo ci-dessus (puis Enregistrer)."; return; }
       bt.disabled = true; msg.textContent = "Envoi…";
-      const nom = `${avatar()} ${pseudo()}`, moy = notes.length ? notes.reduce((t, n) => t + n.note, 0) / notes.length : null;
+      const nom = `${avTxt()} ${pseudo()}`, moy = notes.length ? notes.reduce((t, n) => t + n.note, 0) / notes.length : null;
       const corps = { _subject: `📚 Résultats 14.03.1879 — ${nom}${moy === null ? "" : " : moyenne " + fmt1(moy) + "/20"}`, _template: "table", _captcha: "false",
         "Élève": nom, "Moyenne des épreuves": moy === null ? "—" : fmt1(moy) + "/20",
         "Notes": notes.map(n => `• ${n.chap} — ${n.type} : ${fmt1(n.note)}/20`).join("\n") || "—",
         "Erreurs fréquentes": err.slice(0, 15).map(x => `• ${x.n}× ${lisible(x.q)} (${x.chap})`).join("\n") || "—",
-        "DONNEES": "DONNEES:" + b64({ v: 1, p: pseudo(), a: avatar(), n: notes.map(n => [n.chap, n.type, Math.round(n.note * 10) / 10]), e: err.slice(0, 30).map(x => [x.chap, lisible(x.q), x.n]) }),
+        "DONNEES": "DONNEES:" + b64({ v: 1, p: pseudo(), a: avTxt(), n: notes.map(n => [n.chap, n.type, Math.round(n.note * 10) / 10]), e: err.slice(0, 30).map(x => [x.chap, lisible(x.q), x.n]) }),
         "Date": new Date().toLocaleString("fr-FR") };
       try {
         const r = await fetch(MAIL_URL, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(corps) });
@@ -553,7 +562,7 @@
       if (!SITE) await chargerReglages();
       if (mid !== "mentions" && !connecte()) { pageConnexion(); return; }
       nav.hidden = false;
-      if (!avatar() && mid !== "mentions" && mid !== "profil") { history.replaceState(null, "", "#profil"); mid = "profil"; cid = onglet = undefined; }
+      if (!avatarOk() && mid !== "mentions" && mid !== "profil") { history.replaceState(null, "", "#profil"); mid = "profil"; cid = onglet = undefined; }
       majNavProfil();
       const m = MATIERES.find(x => x.id === mid);
       marquerNav(m ? m.id : mid ? "-" : "");

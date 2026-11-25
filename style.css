@@ -274,3 +274,15 @@ table.bilan td{padding:8px;border-bottom:1px solid #d9e2f5;vertical-align:top}
 .barre{display:inline-block;width:70px;height:9px;background:#e3eaf8;border-radius:9px;vertical-align:middle;overflow:hidden}.barre i{display:block;height:100%;background:#e2453c;border-radius:9px}
 @media print{.barre{border:1px solid #999}.barre i{background:#555!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 .bilan-rapport h3{margin:18px 0 6px}
+
+/* créateur d'avatar */
+.creator{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;margin:10px 0}.apercu{flex:0 0 auto;border-radius:26px;box-shadow:0 6px 18px rgba(18,48,107,.2);line-height:0}
+.creator .opts{flex:1 1 260px;display:flex;flex-direction:column;gap:6px}.optav{border:0;padding:0;margin:0}.optav legend{font:700 13px "Nunito";color:#4a5a82;padding:0;margin-bottom:3px}
+.rang{display:flex;flex-wrap:wrap;gap:6px}
+.sw{width:30px;height:30px;border-radius:50%;border:3px solid #fff;background:var(--sw);box-shadow:0 0 0 1.5px #9aa9cc;cursor:pointer;padding:0}
+.sw[aria-pressed=true]{box-shadow:0 0 0 3px #1f63d6}
+.fm{font:700 13px "Nunito";border:2px solid #c8d4f0;background:#fff;color:#12306b;border-radius:99px;padding:5px 11px;cursor:pointer}
+.fm[aria-pressed=true]{background:#1f63d6;border-color:#1f63d6;color:#fff}
+.sw:focus-visible,.fm:focus-visible{outline:3px solid #ffc634;outline-offset:2px}
+.navav{display:inline-block;vertical-align:middle;line-height:0;margin-right:2px}.navav .avsvg{border-radius:7px}
+.creator .opts .btn{align-self:flex-start}
