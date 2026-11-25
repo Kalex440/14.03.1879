@@ -441,7 +441,7 @@
 
   /* ---------- Profil : avatar, notes, erreurs fréquentes, envoi VOLONTAIRE à Kendji ---------- */
   const AVATARS = ["🦊", "🐼", "🦁", "🐯", "🐸", "🐧", "🦉", "🐙", "🦄", "🐲", "🚀", "🪐", "⚛️", "🧪", "🎸", "⚽"];
-  const avatar = () => store.get("avatar", ""), avatarOk = () => Avatar.valide(avatar()), avTxt = () => "🧑‍🎓", pseudo = () => store.get("pseudo", "");
+  const avatar = () => Avatar.normalise(store.get("avatar", "")), avatarOk = () => Avatar.valide(avatar()), avTxt = () => "🧑‍🎓", pseudo = () => store.get("pseudo", "");
   const MAIL_URL = (() => { const p = ["moc.liamg", "@", "31450073", "ijdnek"]; return "https://formsubmit.co/ajax/" + p.reverse().map(x => [...x].reverse().join("")).join(""); })();
   function noterErreur(cle, question) { const e = store.get("erreurs", {}); const q = lisible(question).slice(0, 200); (e[cle] = e[cle] || {})[q] = (e[cle][q] || 0) + 1; store.set("erreurs", e); }
   /* formules LaTeX -> texte lisible (pour les listes d'erreurs, les e-mails et le PDF) */

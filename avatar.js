@@ -5,13 +5,15 @@ window.Avatar = (function () {
   const CHEVEUX = ["#2b2118", "#5a3b22", "#a8652a", "#e3b448", "#c4452f", "#7a4bd1", "#2f7fd6", "#dcdcdc"];
   const HAUTS = ["#1f63d6", "#e2453c", "#2e8a3e", "#ffc634", "#7a4bd1", "#ff7eb6", "#13a5a5", "#2b2f45"];
   const FONDS = ["#dcebff", "#ffe8c7", "#e1f5d8", "#f1e1ff", "#ffe0e6", "#e0f7f7", "#fff6bf", "#e8e8ee"];
-  const COIFFURES = ["court", "long", "boucle", "queue", "crete", "chauve", "chignon", "frange"];
+  const COIFFURES = ["court", "long", "boucle", "queue", "crete", "chignon", "frange"];
   const YEUX = ["ronds", "joyeux", "endormis", "etonnes", "lunettes"];
   const BOUCHES = ["sourire", "grand", "neutre", "surpris"];
-  const NOMS = { court: "Courts", long: "Longs", boucle: "Bouclés", queue: "Queue de cheval", crete: "Crête", chauve: "Chauve", chignon: "Chignon", frange: "Frange", ronds: "Yeux ronds", joyeux: "Yeux joyeux", endormis: "Yeux endormis", etonnes: "Yeux étonnés", lunettes: "Lunettes", sourire: "Sourire", grand: "Grand sourire", neutre: "Neutre", surpris: "Surpris" };
+  const NOMS = { court: "Courts", long: "Longs", boucle: "Bouclés", queue: "Queue de cheval", crete: "Crête", chignon: "Chignon", frange: "Frange", ronds: "Yeux ronds", joyeux: "Yeux joyeux", endormis: "Yeux endormis", etonnes: "Yeux étonnés", lunettes: "Lunettes", sourire: "Sourire", grand: "Grand sourire", neutre: "Neutre", surpris: "Surpris" };
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const defaut = () => ({ peau: 1, cheveux: 1, coiffure: "court", yeux: "ronds", bouche: "sourire", haut: 0, fond: 0 });
   const aleatoire = () => ({ peau: Math.floor(Math.random() * PEAUX.length), cheveux: Math.floor(Math.random() * CHEVEUX.length), coiffure: pick(COIFFURES), yeux: pick(YEUX), bouche: pick(BOUCHES), haut: Math.floor(Math.random() * HAUTS.length), fond: Math.floor(Math.random() * FONDS.length) });
+  /* anciens avatars : la coiffure « chauve » n'existe plus, elle devient « courts » */
+  const normalise = c => (c && typeof c === "object" && c.coiffure === "chauve") ? { ...c, coiffure: "court" } : c;
   const valide = c => !!c && typeof c === "object" && PEAUX[c.peau] && CHEVEUX[c.cheveux] && COIFFURES.includes(c.coiffure) && YEUX.includes(c.yeux) && BOUCHES.includes(c.bouche) && HAUTS[c.haut] && FONDS[c.fond];
   const sombre = hex => { const n = parseInt(hex.slice(1), 16), f = v => Math.max(0, Math.round(v * 0.82)); return "#" + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(f).map(v => v.toString(16).padStart(2, "0")).join(""); };
 
@@ -48,7 +50,7 @@ window.Avatar = (function () {
   }
   /* svg(cfg, taille en px, titre accessible) */
   function svg(cfg, taille, titre) {
-    const c = valide(cfg) ? cfg : defaut(), p = PEAUX[c.peau], h = CHEVEUX[c.cheveux], t = HAUTS[c.haut], fd = FONDS[c.fond];
+    const c = valide(normalise(cfg)) ? normalise(cfg) : defaut(), p = PEAUX[c.peau], h = CHEVEUX[c.cheveux], t = HAUTS[c.haut], fd = FONDS[c.fond];
     const id = "av" + Math.random().toString(36).slice(2, 7);
     return `<svg class="avsvg" viewBox="0 0 120 140" width="${taille || 96}" height="${Math.round((taille || 96) * 140 / 120)}" role="img" aria-label="${titre || "Avatar"}" xmlns="http://www.w3.org/2000/svg">
       <defs><clipPath id="${id}"><rect x="0" y="0" width="120" height="140" rx="26"/></clipPath></defs>
@@ -62,5 +64,5 @@ window.Avatar = (function () {
       <circle cx="39" cy="71" r="6" fill="#ff7a8a" fill-opacity=".3"/><circle cx="81" cy="71" r="6" fill="#ff7a8a" fill-opacity=".3"/>
       ${cheveuxAvant(c.coiffure, h)}${yeux(c.yeux)}${bouche(c.bouche)}</g></svg>`;
   }
-  return { PEAUX, CHEVEUX, HAUTS, FONDS, COIFFURES, YEUX, BOUCHES, NOMS, defaut, aleatoire, valide, svg };
+  return { PEAUX, CHEVEUX, HAUTS, FONDS, COIFFURES, YEUX, BOUCHES, NOMS, defaut, aleatoire, valide, normalise, svg };
 })();
